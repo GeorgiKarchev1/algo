@@ -393,7 +393,7 @@ export default function JuniorPage() {
                                             >
                                                 📅
                                             </motion.span>
-                                            Today's Epic Challenge
+                                            Today&apos;s Epic Challenge
                                         </motion.h2>
                                         <p className="text-blue-100 text-lg">
                                             {new Date(dailyProblem.featuredDate).toLocaleDateString('en-US', {

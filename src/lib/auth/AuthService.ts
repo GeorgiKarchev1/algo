@@ -2,7 +2,6 @@ import { supabase } from '@/lib/supabase/client';
 import type { 
   AuthUser, 
   AuthResponse, 
-  LoginFormData, 
   SignUpFormData, 
   UserProfile 
 } from '@/lib/supabase/types';
@@ -293,9 +292,9 @@ export class AuthService {
         .single();
       
       if (!error && data) {
-        profile = data as any;
+        profile = data as UserProfile;
       }
-    } catch (error) {
+    } catch {
       // Profile might not exist yet, that's okay
     }
 

@@ -149,9 +149,10 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
     setErrors({});
     setSuccessMessage('');
 
-    try {
-      const { confirmPassword, ...signUpData } = formData;
-      const response = await signUp(signUpData);
+          try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { confirmPassword, ...signUpData } = formData;
+        const response = await signUp(signUpData);
       
       if (response.success) {
         setSuccessMessage(response.message);
@@ -161,7 +162,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
       } else {
         setErrors({ general: response.message });
       }
-    } catch (error) {
+    } catch {
       setErrors({ 
         general: 'An unexpected error occurred. Please try again.' 
       });

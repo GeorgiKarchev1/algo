@@ -104,7 +104,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []); // Remove state dependency to prevent infinite loops
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Sign in user

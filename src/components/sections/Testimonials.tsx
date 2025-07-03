@@ -10,14 +10,14 @@ const testimonials = [
     name: 'Sarah Chen',
     role: 'Frontend Developer',
     avatar: '👩‍💻',
-    content: 'Finally, DSA that doesn\'t make me want to cry. The 1-minute lessons fit perfectly into my coffee breaks.',
+            content: 'Finally, DSA that doesn&apos;t make me want to cry. The 1-minute lessons fit perfectly into my coffee breaks.',
     rating: 5
   },
   {
     name: 'Marcus Rodriguez',
     role: 'Full Stack Engineer',
     avatar: '👨‍🚀',
-    content: 'I\'ve been "learning" algorithms for 3 years. Lazy Algo Club taught me more in 3 weeks than all those boring textbooks.',
+            content: 'I&apos;ve been &quot;learning&quot; algorithms for 3 years. Lazy Algo Club taught me more in 3 weeks than all those boring textbooks.',
     rating: 5
   },
   {
@@ -31,21 +31,21 @@ const testimonials = [
     name: 'Jamie Taylor',
     role: 'Backend Developer',
     avatar: '👩‍🔬',
-    content: 'No more imposter syndrome in tech interviews. I actually understand what I\'m talking about now!',
+            content: 'No more imposter syndrome in tech interviews. I actually understand what I&apos;m talking about now!',
     rating: 5
   },
   {
     name: 'Dev Patel',
     role: 'Software Engineer',
     avatar: '👨‍💼',
-    content: 'The visual explanations are *chef\'s kiss*. Finally clicked why everyone talks about Big O notation.',
+            content: 'The visual explanations are *chef&apos;s kiss*. Finally clicked why everyone talks about Big O notation.',
     rating: 5
   },
   {
     name: 'Riley Johnson',
     role: 'Bootcamp Grad',
     avatar: '🧑‍🎨',
-    content: 'Went from "algorithms are scary" to "bring on the coding challenges" in just a month. Game changer.',
+            content: 'Went from &quot;algorithms are scary&quot; to &quot;bring on the coding challenges&quot; in just a month. Game changer.',
     rating: 5
   }
 ];

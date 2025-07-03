@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Play, CheckCircle, ArrowRight, Code2, Lightbulb, X, Zap } from 'lucide-react';
 
 const demoQuestion = {
-  question: "What's the time complexity of this binary search?",
+      question: "What&apos;s the time complexity of this binary search?",
   code: `function binarySearch(arr, target) {
   let left = 0, right = arr.length - 1;
   

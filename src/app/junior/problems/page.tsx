@@ -327,7 +327,7 @@ export default function JuniorProblemsPage() {
                         <div className="mt-4 flex items-center justify-between text-sm text-gray-400">
                             <div>
                                 {searchTerm ? (
-                                    <>Found {filteredProblems.length} problems matching "{searchTerm}"</>
+                                    <>Found {filteredProblems.length} problems matching &quot;{searchTerm}&quot;</>
                                 ) : (
                                     <>Showing all {problems.length} easy problems</>
                                 )}

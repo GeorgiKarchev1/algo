@@ -88,7 +88,7 @@ export default function LoginForm({
       } else {
         setErrors({ general: response.message });
       }
-    } catch (error) {
+    } catch {
       setErrors({ 
         general: 'An unexpected error occurred. Please try again.' 
       });
@@ -302,7 +302,7 @@ export default function LoginForm({
           transition={{ duration: 0.5, delay: 0.4 }}
         >
           <p className="text-gray-400">
-            Don't have an account?{' '}
+                                      Don&apos;t have an account?{' '}
             <button
               onClick={onSwitchToSignUp}
               className="text-blue-400 hover:text-blue-300 font-medium transition-colors"

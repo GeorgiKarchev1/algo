@@ -4,20 +4,15 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Search, 
-    Filter, 
     ChevronLeft, 
     ChevronRight, 
     Code2, 
-    Zap, 
-    Trophy, 
     Target, 
-    Brain, 
-    Clock, 
     CheckCircle2, 
     AlertCircle, 
     Flame, 
     Sparkles,
-    ArrowUpDown,
+
     Grid3X3,
     List,
     Shuffle,
