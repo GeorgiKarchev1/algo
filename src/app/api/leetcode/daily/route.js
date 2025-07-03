@@ -22,25 +22,53 @@ class DatabaseManager {
 
     getDailyProblem(date = null) {
         const db = this.connect();
-        const query = `
+        
+        // First try to get the daily problem for the specific date
+        if (date) {
+            const query = `
+                SELECT 
+                    p.*,
+                    dp.featured_date,
+                    GROUP_CONCAT(DISTINCT e.example_text ORDER BY e.example_order) as examples,
+                    GROUP_CONCAT(DISTINCT c.constraint_text ORDER BY c.constraint_order) as constraints
+                FROM problems p
+                JOIN daily_problems dp ON p.problem_id = dp.problem_id
+                LEFT JOIN examples e ON p.problem_id = e.problem_id
+                LEFT JOIN constraints c ON p.problem_id = c.problem_id
+                WHERE dp.featured_date = ?
+                GROUP BY p.id
+            `;
+            
+            const stmt = db.prepare(query);
+            const result = stmt.get(date);
+            
+            if (result) {
+                result.examples = result.examples ? result.examples.split(',') : [];
+                result.constraints = result.constraints ? result.constraints.split(',') : [];
+                return result;
+            }
+        }
+        
+        // If no specific date requested or no daily problem found, return a random easy problem
+        const randomQuery = `
             SELECT 
                 p.*,
-                dp.featured_date,
+                DATE('now') as featured_date,
                 GROUP_CONCAT(DISTINCT e.example_text ORDER BY e.example_order) as examples,
                 GROUP_CONCAT(DISTINCT c.constraint_text ORDER BY c.constraint_order) as constraints
             FROM problems p
-            JOIN daily_problems dp ON p.problem_id = dp.problem_id
             LEFT JOIN examples e ON p.problem_id = e.problem_id
             LEFT JOIN constraints c ON p.problem_id = c.problem_id
-            WHERE dp.featured_date = COALESCE(?, DATE('now'))
+            WHERE p.difficulty = 'Easy'
             GROUP BY p.id
+            ORDER BY RANDOM()
+            LIMIT 1
         `;
         
-        const stmt = db.prepare(query);
-        const result = stmt.get(date);
+        const randomStmt = db.prepare(randomQuery);
+        const result = randomStmt.get();
         
         if (result) {
-            // Parse the concatenated strings back to arrays
             result.examples = result.examples ? result.examples.split(',') : [];
             result.constraints = result.constraints ? result.constraints.split(',') : [];
         }
@@ -81,7 +109,7 @@ export async function GET(request) {
         
         if (!dailyProblem) {
             return NextResponse.json(
-                { error: 'No daily problem found for the specified date' },
+                { error: 'No problems available in the database' },
                 { status: 404 }
             );
         }
