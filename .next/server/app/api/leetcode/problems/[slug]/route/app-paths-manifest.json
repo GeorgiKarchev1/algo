@@ -1,0 +1,3 @@
+{
+  "/api/leetcode/problems/[slug]/route": "app/api/leetcode/problems/[slug]/route.js"
+}

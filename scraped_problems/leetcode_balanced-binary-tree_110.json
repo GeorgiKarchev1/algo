@@ -1,0 +1,18 @@
+{
+  "title": "Balanced Binary Tree",
+  "slug": "balanced-binary-tree",
+  "difficulty": "Easy",
+  "description": "Given a binary tree, determine if it is height-balanced. &nbsp; Example 1: Input: root = [3,9,20,null,null,15,7] Output: true Example 2: Input: root = [1,2,2,3,3,null,null,4,4] Output: false Example 3: Input: root = [] Output: true &nbsp; Constraints: The number of nodes in the tree is in the range [0, 5000]. -104 <= Node.val <= 104",
+  "examples": [
+    "Input: root = [3,9,20,null,null,15,7] Output: true",
+    "Input: root = [1,2,2,3,3,null,null,4,4] Output: false",
+    "Input: root = [] Output: true &nbsp;"
+  ],
+  "constraints": [
+    "The number of nodes in the tree is in the range [0, 5000].",
+    "-104 <= Node.val <= 104"
+  ],
+  "problem_id": 110,
+  "url": "https://leetcode.com/problems/balanced-binary-tree/",
+  "scraped_at": "2025-06-17T17:05:50.507581"
+}

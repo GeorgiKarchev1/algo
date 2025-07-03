@@ -1,0 +1,17 @@
+{
+  "title": "Add Digits",
+  "slug": "add-digits",
+  "difficulty": "Easy",
+  "description": "Given an integer num, repeatedly add all its digits until the result has only one digit, and return it. &nbsp; Example 1: Input: num = 38 Output: 2 Explanation: The process is 38 --> 3 + 8 --> 11 11 --> 1 + 1 --> 2 Since 2 has only one digit, return it. Example 2: Input: num = 0 Output: 0 &nbsp; Constraints: 0 <= num <= 231 - 1 &nbsp; Follow up: Could you do it without any loop/recursion in O(1) runtime?",
+  "examples": [
+    "Input: num = 38 Output: 2 Explanation: The process is 38 --> 3 + 8 --> 11 11 --> 1 + 1 --> 2 Since 2 has only one digit, return it.",
+    "Input: num = 0 Output: 0 &nbsp;"
+  ],
+  "constraints": [
+    "0 <= num <= 231 - 1",
+    "&nbsp;"
+  ],
+  "problem_id": 258,
+  "url": "https://leetcode.com/problems/add-digits/",
+  "scraped_at": "2025-06-17T17:07:57.322795"
+}

@@ -1,0 +1,18 @@
+{
+  "title": "Palindrome Linked List",
+  "slug": "palindrome-linked-list",
+  "difficulty": "Easy",
+  "description": "Given the head of a singly linked list, return true if it is a palindrome or false otherwise. &nbsp; Example 1: Input: head = [1,2,2,1] Output: true Example 2: Input: head = [1,2] Output: false &nbsp; Constraints: The number of nodes in the list is in the range [1, 105]. 0 <= Node.val <= 9 &nbsp; Follow up: Could you do it in O(n) time and O(1) space?",
+  "examples": [
+    "Input: head = [1,2,2,1] Output: true",
+    "Input: head = [1,2] Output: false &nbsp;"
+  ],
+  "constraints": [
+    "The number of nodes in the list is in the range [1, 105].",
+    "0 <= Node.val <= 9",
+    "&nbsp;"
+  ],
+  "problem_id": 234,
+  "url": "https://leetcode.com/problems/palindrome-linked-list/",
+  "scraped_at": "2025-06-17T17:07:47.986328"
+}

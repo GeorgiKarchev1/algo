@@ -1,0 +1,18 @@
+{
+  "title": "First Unique Character in a String",
+  "slug": "first-unique-character-in-a-string",
+  "difficulty": "Easy",
+  "description": "Given a string s, find the first non-repeating character in it and return its index. If it does not exist, return -1. &nbsp; Example 1: Input: s = \"leetcode\" Output: 0 Explanation: The character 'l' at index 0 is the first character that does not occur at any other index. Example 2: Input: s = \"loveleetcode\" Output: 2 Example 3: Input: s = \"aabb\" Output: -1 &nbsp; Constraints: 1 <= s.length <= 105 s consists of only lowercase English letters.",
+  "examples": [
+    "Input: s = \"leetcode\" Output: 0 Explanation: The character 'l' at index 0 is the first character that does not occur at any other index.",
+    "Input: s = \"loveleetcode\" Output: 2",
+    "Input: s = \"aabb\" Output: -1 &nbsp;"
+  ],
+  "constraints": [
+    "1 <= s.length <= 105",
+    "s consists of only lowercase English letters."
+  ],
+  "problem_id": 387,
+  "url": "https://leetcode.com/problems/first-unique-character-in-a-string/",
+  "scraped_at": "2025-06-17T17:08:49.547652"
+}

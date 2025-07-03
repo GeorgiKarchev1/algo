@@ -1,0 +1,17 @@
+{
+  "title": "Excel Sheet Column Title",
+  "slug": "excel-sheet-column-title",
+  "difficulty": "Easy",
+  "description": "Given an integer columnNumber, return its corresponding column title as it appears in an Excel sheet. For example: A -> 1 B -> 2 C -> 3 ... Z -> 26 AA -> 27 AB -> 28 ... &nbsp; Example 1: Input: columnNumber = 1 Output: \"A\" Example 2: Input: columnNumber = 28 Output: \"AB\" Example 3: Input: columnNumber = 701 Output: \"ZY\" &nbsp; Constraints: 1 <= columnNumber <= 231 - 1",
+  "examples": [
+    "Input: columnNumber = 1 Output: \"A\"",
+    "Input: columnNumber = 28 Output: \"AB\"",
+    "Input: columnNumber = 701 Output: \"ZY\" &nbsp;"
+  ],
+  "constraints": [
+    "1 <= columnNumber <= 231 - 1"
+  ],
+  "problem_id": 168,
+  "url": "https://leetcode.com/problems/excel-sheet-column-title/",
+  "scraped_at": "2025-06-17T17:06:26.490630"
+}

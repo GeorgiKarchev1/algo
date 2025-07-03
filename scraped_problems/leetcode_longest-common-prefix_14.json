@@ -1,0 +1,18 @@
+{
+  "title": "Longest Common Prefix",
+  "slug": "longest-common-prefix",
+  "difficulty": "Easy",
+  "description": "Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string \"\". &nbsp; Example 1: Input: strs = [\"flower\",\"flow\",\"flight\"] Output: \"fl\" Example 2: Input: strs = [\"dog\",\"racecar\",\"car\"] Output: \"\" Explanation: There is no common prefix among the input strings. &nbsp; Constraints: 1 <= strs.length <= 200 0 <= strs[i].length <= 200 strs[i] consists of only lowercase English letters if it is non-empty.",
+  "examples": [
+    "Input: strs = [\"flower\",\"flow\",\"flight\"] Output: \"fl\"",
+    "Input: strs = [\"dog\",\"racecar\",\"car\"] Output: \"\" Explanation: There is no common prefix among the input strings. &nbsp;"
+  ],
+  "constraints": [
+    "1 <= strs.length <= 200",
+    "0 <= strs[i].length <= 200",
+    "strs[i] consists of only lowercase English letters if it is non-empty."
+  ],
+  "problem_id": 14,
+  "url": "https://leetcode.com/problems/longest-common-prefix/",
+  "scraped_at": "2025-06-17T17:04:52.668364"
+}

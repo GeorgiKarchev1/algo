@@ -1,0 +1,17 @@
+{
+  "title": "Reverse Vowels of a String",
+  "slug": "reverse-vowels-of-a-string",
+  "difficulty": "Easy",
+  "description": "Given a string s, reverse only all the vowels in the string and return it. The vowels are 'a', 'e', 'i', 'o', and 'u', and they can appear in both lower and upper cases, more than once. &nbsp; Example 1: Input: s = \"IceCreAm\" Output: \"AceCreIm\" Explanation: The vowels in s are ['I', 'e', 'e', 'A']. On reversing the vowels, s becomes \"AceCreIm\". Example 2: Input: s = \"leetcode\" Output: \"leotcede\" &nbsp; Constraints: 1 <= s.length <= 3 * 105 s consist of printable ASCII characters.",
+  "examples": [
+    "Input: s = \"IceCreAm\" Output: \"AceCreIm\" Explanation: The vowels in s are ['I', 'e', 'e', 'A']. On reversing the vowels, s becomes \"AceCreIm\".",
+    "Input: s = \"leetcode\" Output: \"leotcede\" &nbsp;"
+  ],
+  "constraints": [
+    "1 <= s.length <= 3 * 105",
+    "s consist of"
+  ],
+  "problem_id": 345,
+  "url": "https://leetcode.com/problems/reverse-vowels-of-a-string/",
+  "scraped_at": "2025-06-17T17:08:32.688066"
+}
