@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { SUBSCRIPTION_PLANS } from './config';
+import { SUBSCRIPTION_PLANS, lemonSqueezyConfig } from './config';
 import type { SubscriptionPlan, UserSubscription, PlanType } from '@/lib/supabase/types';
 
 export class LemonSqueezyService {
@@ -35,8 +35,8 @@ export class LemonSqueezyService {
         };
       }
 
-      // Simplified checkout creation
-      const checkoutUrl = `https://lazyalgoclub.lemonsqueezy.com/checkout/buy/${plan.variantId}?checkout[custom][user_id]=${userId}&checkout[email]=${userEmail}`;
+      // Create checkout URL using store slug from environment
+      const checkoutUrl = `https://${lemonSqueezyConfig.storeSlug}.lemonsqueezy.com/checkout/buy/${plan.variantId}?checkout[custom][user_id]=${userId}&checkout[email]=${userEmail}`;
 
       return {
         checkoutUrl,

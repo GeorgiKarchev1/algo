@@ -4,6 +4,7 @@ import { lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
 export const lemonSqueezyConfig = {
   apiKey: process.env.LEMONSQUEEZY_API_KEY!,
   storeId: process.env.LEMONSQUEEZY_STORE_ID!,
+  storeSlug: process.env.LEMONSQUEEZY_STORE_SLUG!,
   webhookSecret: process.env.LEMONSQUEEZY_WEBHOOK_SECRET!,
   webhookUrl: process.env.LEMONSQUEEZY_WEBHOOK_URL!,
 };
@@ -38,6 +39,7 @@ export function validateLemonSqueezyConfig() {
   const requiredEnvVars = [
     'LEMONSQUEEZY_API_KEY',
     'LEMONSQUEEZY_STORE_ID',
+    'LEMONSQUEEZY_STORE_SLUG',
     'LEMONSQUEEZY_WEBHOOK_SECRET',
     'LEMONSQUEEZY_WEBHOOK_URL',
     'LEMONSQUEEZY_CASUAL_PRODUCT_ID',

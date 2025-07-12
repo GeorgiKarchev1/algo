@@ -99,7 +99,12 @@ SELECT * FROM public.subscription_plans;
 1. LemonSqueezy Dashboard > Store Settings
 2. Копирай Store ID (число)
 
-### 3.3 Настрой .env файла
+### 3.3 Намери Store Slug
+1. LemonSqueezy Dashboard > Store Settings
+2. Копирай Store Slug (текст след "https://" в Store URL)
+3. Например: ако Store URL е `https://mystore.lemonsqueezy.com`, то Store Slug е `mystore`
+
+### 3.4 Настрой .env файла
 Копирай `.env.example` към `.env.local` и попълни:
 
 ```bash
@@ -113,6 +118,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-existing-key
 # LemonSqueezy 
 LEMONSQUEEZY_API_KEY=lmsq_sk_your-api-key
 LEMONSQUEEZY_STORE_ID=your-store-id
+LEMONSQUEEZY_STORE_SLUG=your-store-slug
 LEMONSQUEEZY_WEBHOOK_SECRET=your-webhook-secret
 LEMONSQUEEZY_WEBHOOK_URL=http://localhost:3000/api/webhooks/lemonsqueezy
 
