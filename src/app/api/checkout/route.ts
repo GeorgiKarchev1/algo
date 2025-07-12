@@ -5,7 +5,7 @@ import type { PlanType } from '@/lib/supabase/types';
 
 export async function POST(request: NextRequest) {
   try {
-    const { planType, redirectUrl } = await request.json();
+    const { planType } = await request.json();
 
     if (!planType) {
       return NextResponse.json(

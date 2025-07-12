@@ -12,9 +12,9 @@ export default function PrivacyPolicy() {
             <Shield className="w-8 h-8 text-primary-400" />
             <h1 className="text-4xl font-bold">Privacy Policy</h1>
           </div>
-          <p className="text-xl text-muted-foreground">
-            Your privacy is important to us. Here's how we protect your data.
-          </p>
+                      <p className="text-xl text-muted-foreground">
+              Your privacy is important to us. Here&apos;s how we protect your data.
+            </p>
           <p className="text-sm text-muted-foreground mt-2">
             Last updated: {new Date().toLocaleDateString('en-US', { 
               year: 'numeric', 
@@ -34,7 +34,7 @@ export default function PrivacyPolicy() {
                 <h2 className="text-2xl font-semibold">Introduction</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                Lazy Algo Club ("we", "our", or "us") is committed to protecting your privacy. 
+                Lazy Algo Club (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting your privacy. 
                 This Privacy Policy explains how we collect, use, disclose, and safeguard your 
                 information when you use our platform, including our website and services.
               </p>
@@ -204,7 +204,7 @@ export default function PrivacyPolicy() {
               <p className="text-muted-foreground leading-relaxed">
                 We may update this Privacy Policy from time to time. We will notify you of any 
                 material changes by posting the new Privacy Policy on this page and updating the 
-                "Last updated" date. Your continued use of our services after any changes 
+                &quot;Last updated&quot; date. Your continued use of our services after any changes 
                 constitutes acceptance of the new Privacy Policy.
               </p>
             </CardContent>

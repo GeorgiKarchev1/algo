@@ -1,21 +1,10 @@
-import {
-  createCheckout,
-  getCustomer,
-  getSubscription,
-  listCustomers,
-} from '@lemonsqueezy/lemonsqueezy.js';
 import { createClient } from '@/lib/supabase/server';
-import { SUBSCRIPTION_PLANS, lemonSqueezyConfig } from './config';
+import { SUBSCRIPTION_PLANS } from './config';
 import type { SubscriptionPlan, UserSubscription, PlanType } from '@/lib/supabase/types';
 
 export class LemonSqueezyService {
-  private supabase: any = null;
-
   private async getSupabase() {
-    if (!this.supabase) {
-      this.supabase = await createClient();
-    }
-    return this.supabase;
+    return await createClient();
   }
 
   /**
@@ -25,7 +14,7 @@ export class LemonSqueezyService {
     userId: string,
     planType: PlanType,
     userEmail: string,
-    userName?: string
+    _userName?: string // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<{ checkoutUrl: string; error?: string }> {
     try {
       const plan = SUBSCRIPTION_PLANS[planType];
@@ -118,7 +107,7 @@ export class LemonSqueezyService {
     variantId: string,
     status: string,
     userId: string,
-    subscriptionData: any
+    subscriptionData: Record<string, unknown>
   ): Promise<void> {
     try {
       const supabase = await this.getSupabase();
@@ -142,17 +131,17 @@ export class LemonSqueezyService {
         lemon_customer_id: customerId,
         status: this.mapLemonSqueezyStatusToInternal(status),
         current_period_start: subscriptionData.current_period_start
-          ? new Date(subscriptionData.current_period_start).toISOString()
+          ? new Date(subscriptionData.current_period_start as string).toISOString()
           : null,
         current_period_end: subscriptionData.current_period_end
-          ? new Date(subscriptionData.current_period_end).toISOString()
+          ? new Date(subscriptionData.current_period_end as string).toISOString()
           : null,
-        cancel_at_period_end: subscriptionData.cancel_at_period_end || false,
+        cancel_at_period_end: Boolean(subscriptionData.cancel_at_period_end),
         cancelled_at: subscriptionData.cancelled_at
-          ? new Date(subscriptionData.cancelled_at).toISOString()
+          ? new Date(subscriptionData.cancelled_at as string).toISOString()
           : null,
         trial_end: subscriptionData.trial_end
-          ? new Date(subscriptionData.trial_end).toISOString()
+          ? new Date(subscriptionData.trial_end as string).toISOString()
           : null,
       };
 
