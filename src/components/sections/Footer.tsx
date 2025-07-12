@@ -79,8 +79,8 @@ export default function Footer() {
             <ul className="space-y-2 text-muted-foreground">
               <li><a href="#" className="hover:text-foreground transition-colors">Help Center</a></li>
               <li><a href="#" className="hover:text-foreground transition-colors">Contact</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Privacy</a></li>
-              <li><a href="#" className="hover:text-foreground transition-colors">Terms</a></li>
+              <li><a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a></li>
             </ul>
           </motion.div>
         </div>

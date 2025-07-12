@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { CheckCircle, Zap, Crown, Sparkles } from 'lucide-react';
+import { CheckCircle, Zap, Crown, Sparkles, Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import type { PlanType } from '@/lib/supabase/types';
 
 const pricingPlans = [
   {
@@ -48,32 +50,54 @@ const pricingPlans = [
     gradient: 'from-blue-500 to-purple-600',
     bgColor: 'bg-gradient-to-br from-blue-500/10 to-purple-600/10',
     borderColor: 'border-blue-500/30'
-  },
-  {
-    id: 'sigma',
-    name: 'Sigma Grindset',
-    emoji: '🗿⚡',
-    price: '$39',
-    period: '/month',
-    description: 'For those who grind algorithms while others sleep (but efficiently)',
-    features: [
-      'Everything in GigaChad',
-      '1-on-1 mentoring sessions',
-      'Custom algorithm challenges',
-      'LinkedIn certification',
-      'Job placement assistance',
-      'Exclusive algorithm sheets',
-      'Direct line to our devs'
-    ],
-    buttonText: 'Join The Sigma Academy',
-    popular: false,
-    gradient: 'from-amber-500 to-orange-600',
-    bgColor: 'bg-gradient-to-br from-amber-500/10 to-orange-600/10',
-    borderColor: 'border-amber-500/30'
   }
 ];
 
 export default function Pricing() {
+  const { user } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = async (planId: string) => {
+    if (!user) {
+      // Redirect to sign up or show auth modal
+      alert('Please sign in to subscribe');
+      return;
+    }
+
+    setLoadingPlan(planId);
+
+    try {
+      const planTypeMap: { [key: string]: PlanType } = {
+        'casual': 'CASUAL',
+        'gigachad': 'GIGACHAD',
+      };
+
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planType: planTypeMap[planId],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.checkoutUrl) {
+        // Redirect to LemonSqueezy checkout
+        window.location.href = data.checkoutUrl;
+      } else {
+        alert(data.error || 'Failed to create checkout session');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('An error occurred. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <section className="py-24 px-4 relative overflow-hidden">
       {/* Background Effects */}
@@ -110,7 +134,7 @@ export default function Pricing() {
         </motion.div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {pricingPlans.map((plan, index) => (
             <motion.div
               key={plan.id}
@@ -211,11 +235,13 @@ export default function Pricing() {
                   >
                     <Button
                       size="lg"
+                      onClick={() => handleSubscribe(plan.id)}
+                      disabled={loadingPlan === plan.id}
                       className={`w-full group relative overflow-hidden ${
                         plan.popular 
                           ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700' 
                           : `bg-gradient-to-r ${plan.gradient} hover:opacity-90`
-                      } border-0 text-white font-semibold`}
+                      } border-0 text-white font-semibold disabled:opacity-50`}
                     >
                       <motion.div
                         className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
@@ -224,8 +250,17 @@ export default function Pricing() {
                         transition={{ duration: 0.5 }}
                       />
                       <span className="relative flex items-center justify-center gap-2">
-                        {plan.buttonText}
-                        <Zap className="w-4 h-4 transition-transform group-hover:scale-110" />
+                        {loadingPlan === plan.id ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            {plan.buttonText}
+                            <Zap className="w-4 h-4 transition-transform group-hover:scale-110" />
+                          </>
+                        )}
                       </span>
                     </Button>
                   </motion.div>

@@ -10,8 +10,10 @@ import type {
   AuthUser, 
   AuthResponse, 
   SignUpFormData,
-  UserProfile 
+  UserProfile,
+  UserSubscription 
 } from '@/lib/supabase/types';
+import { LemonSqueezyService } from '@/lib/lemonsqueezy/service';
 
 // Create Auth Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +32,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user: null,
     loading: true,
     initialized: false,
+    subscription: null,
   });
 
   // Initialize authentication state
@@ -39,12 +42,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const initializeAuth = async () => {
       try {
         const user = await authService.getCurrentUser();
+        let subscription: UserSubscription | null = null;
+        
+        // Get subscription if user exists
+        if (user) {
+          const lemonSqueezyService = new LemonSqueezyService();
+          subscription = await lemonSqueezyService.getUserActiveSubscription(user.id);
+        }
         
         if (mounted) {
           setState({
             user,
             loading: false,
             initialized: true,
+            subscription,
           });
         }
       } catch (error) {
@@ -54,6 +65,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             user: null,
             loading: false,
             initialized: true,
+            subscription: null,
           });
         }
       }
@@ -71,10 +83,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
           // Only get fresh user data if we don't have a user or if user ID changed
           if (!state.user || state.user.id !== session.user.id) {
             const user = await authService.getCurrentUser();
+            let subscription: UserSubscription | null = null;
+            
+            // Get subscription if user exists
+            if (user) {
+              const lemonSqueezyService = new LemonSqueezyService();
+              subscription = await lemonSqueezyService.getUserActiveSubscription(user.id);
+            }
+            
             setState(prev => ({
               ...prev,
               user,
               loading: false,
+              subscription,
             }));
           } else {
             // Just update loading state if user exists
@@ -88,6 +109,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             ...prev,
             user: null,
             loading: false,
+            subscription: null,
           }));
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           // Don't fetch user data on token refresh - it's unnecessary
@@ -218,6 +240,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  /**
+   * Refresh subscription data
+   */
+  const refreshSubscription = async (): Promise<void> => {
+    if (!state.user) return;
+    
+    try {
+      const lemonSqueezyService = new LemonSqueezyService();
+      const subscription = await lemonSqueezyService.getUserActiveSubscription(state.user.id);
+      
+      setState(prev => ({
+        ...prev,
+        subscription,
+      }));
+    } catch (error) {
+      console.error('Error refreshing subscription:', error);
+    }
+  };
+
   // Context value
   const value: AuthContextType = {
     ...state,
@@ -226,6 +267,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signOut,
     resetPassword,
     updateProfile,
+    refreshSubscription,
   };
 
   return (
