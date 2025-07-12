@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate plan type
-    const validPlans: PlanType[] = ['CASUAL', 'GIGACHAD', 'SIGMA'];
+    const validPlans: PlanType[] = ['CASUAL', 'GIGACHAD', ];
     if (!validPlans.includes(planType)) {
       return NextResponse.json(
         { error: 'Invalid plan type' },

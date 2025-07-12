@@ -13,7 +13,7 @@ import type {
   UserProfile,
   UserSubscription 
 } from '@/lib/supabase/types';
-import { LemonSqueezyService } from '@/lib/lemonsqueezy/service';
+import { lemonSqueezyClientService } from '@/lib/lemonsqueezy/client-service';
 
 // Create Auth Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,8 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         // Get subscription if user exists
         if (user) {
-          const lemonSqueezyService = new LemonSqueezyService();
-          subscription = await lemonSqueezyService.getUserActiveSubscription(user.id);
+          subscription = await lemonSqueezyClientService.getUserActiveSubscription(user.id);
         }
         
         if (mounted) {
@@ -87,8 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             
             // Get subscription if user exists
             if (user) {
-              const lemonSqueezyService = new LemonSqueezyService();
-              subscription = await lemonSqueezyService.getUserActiveSubscription(user.id);
+              subscription = await lemonSqueezyClientService.getUserActiveSubscription(user.id);
             }
             
             setState(prev => ({
@@ -247,8 +245,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!state.user) return;
     
     try {
-      const lemonSqueezyService = new LemonSqueezyService();
-      const subscription = await lemonSqueezyService.getUserActiveSubscription(state.user.id);
+      const subscription = await lemonSqueezyClientService.getUserActiveSubscription(state.user.id);
       
       setState(prev => ({
         ...prev,

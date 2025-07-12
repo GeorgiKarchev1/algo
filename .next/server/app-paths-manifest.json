@@ -1,5 +1,4 @@
 {
-  "/api/leetcode/daily/route": "app/api/leetcode/daily/route.js",
-  "/junior/page": "app/junior/page.js",
+  "/api/checkout/route": "app/api/checkout/route.js",
   "/page": "app/page.js"
 }
