@@ -91,28 +91,28 @@ export default function Header() {
             {/* Logo */}
             <Link href="/">
               <motion.div 
-                className="flex items-center gap-3 group cursor-pointer"
+                className="flex items-center gap-2 md:gap-3 group cursor-pointer"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <motion.div
-                  className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center"
+                  className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg md:rounded-xl flex items-center justify-center"
                   animate={{ rotate: [0, 5, -5, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
                 >
-                  <Code2 className="w-6 h-6 text-white" />
+                  <Code2 className="w-4 h-4 md:w-6 md:h-6 text-white" />
                 </motion.div>
-                <div>
-                  <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-purple-400 group-hover:to-pink-400 transition-all duration-300">
+                <div className="hidden xs:block">
+                  <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent group-hover:from-purple-400 group-hover:to-pink-400 transition-all duration-300">
                     Lazy Algo Club
                   </h1>
-                  <p className="text-xs text-gray-400 -mt-1">DSA for humans</p>
+                  <p className="text-xs text-gray-400 -mt-1 hidden md:block">DSA for humans</p>
                 </div>
               </motion.div>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.href}
@@ -122,7 +122,7 @@ export default function Header() {
                 >
                   <Link
                     href={item.href}
-                    className="text-gray-300 hover:text-white transition-colors duration-300 font-medium"
+                    className="text-gray-300 hover:text-white transition-colors duration-300 font-medium text-sm xl:text-base"
                   >
                     {item.label}
                   </Link>
@@ -131,12 +131,12 @@ export default function Header() {
             </nav>
 
             {/* Desktop Auth Section */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-3 xl:gap-4">
               {loading && !user ? (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-xl"
+                  className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 rounded-xl"
                 >
                   <div className="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
                   <span className="text-gray-400 text-sm">Loading...</span>
@@ -145,14 +145,14 @@ export default function Header() {
                 <div className="relative" ref={userMenuRef}>
                   <motion.button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 rounded-xl border border-white/10 transition-all duration-300"
+                    className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 rounded-xl border border-white/10 transition-all duration-300"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                       <User className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-white font-medium">
+                    <span className="text-white font-medium text-sm hidden xl:block">
                       {user.fullName || user.email.split('@')[0]}
                     </span>
                   </motion.button>
@@ -221,12 +221,12 @@ export default function Header() {
                   </AnimatePresence>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button
                       variant="outline"
                       onClick={() => handleAuthClick('login')}
-                      className="border-white/20 hover:bg-white/5"
+                      className="border-white/20 hover:bg-white/5 text-sm px-4 py-2"
                     >
                       Sign In
                     </Button>
@@ -235,12 +235,13 @@ export default function Header() {
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button
                       onClick={() => handleAuthClick('signup')}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 relative overflow-hidden group"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 relative overflow-hidden group text-sm px-4 py-2"
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                       <span className="relative flex items-center gap-2">
                         <Sparkles className="w-4 h-4" />
-                        Get Started
+                        <span className="hidden sm:inline">Get Started</span>
+                        <span className="sm:hidden">Start</span>
                       </span>
                     </Button>
                   </motion.div>
@@ -251,14 +252,14 @@ export default function Header() {
             {/* Mobile Menu Button */}
             <motion.button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden w-10 h-10 bg-slate-800 hover:bg-slate-700 rounded-xl flex items-center justify-center transition-colors duration-300"
+              className="lg:hidden w-8 h-8 md:w-10 md:h-10 bg-slate-800 hover:bg-slate-700 rounded-lg md:rounded-xl flex items-center justify-center transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               {isMobileMenuOpen ? (
-                <X className="w-5 h-5 text-white" />
+                <X className="w-4 h-4 md:w-5 md:h-5 text-white" />
               ) : (
-                <Menu className="w-5 h-5 text-white" />
+                <Menu className="w-4 h-4 md:w-5 md:h-5 text-white" />
               )}
             </motion.button>
           </div>
@@ -271,9 +272,9 @@ export default function Header() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="md:hidden mt-4 border-t border-white/10 pt-4"
+                className="lg:hidden mt-4 border-t border-white/10 pt-4"
               >
-                <nav className="space-y-3 mb-6">
+                <nav className="space-y-2 mb-4">
                   {navItems.map((item, index) => (
                     <motion.div
                       key={item.href}
@@ -283,7 +284,7 @@ export default function Header() {
                     >
                       <Link
                         href={item.href}
-                        className="block px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300"
+                        className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300 text-sm"
                         onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {item.label}
@@ -297,22 +298,22 @@ export default function Header() {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex items-center justify-center gap-2 py-4 px-4 bg-slate-800/50 rounded-xl mx-4"
+                    className="flex items-center justify-center gap-2 py-3 px-3 bg-slate-800/50 rounded-xl"
                   >
                     <div className="w-4 h-4 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
                     <span className="text-gray-400 text-sm">Loading...</span>
                   </motion.div>
                 ) : user ? (
-                  <div className="space-y-3">
-                    <div className="px-4 py-3 bg-slate-800/50 rounded-xl">
-                      <p className="text-white font-medium">{user.fullName || 'User'}</p>
-                      <p className="text-gray-400 text-sm">{user.email}</p>
+                  <div className="space-y-2">
+                    <div className="px-3 py-2 bg-slate-800/50 rounded-xl">
+                      <p className="text-white font-medium text-sm">{user.fullName || 'User'}</p>
+                      <p className="text-gray-400 text-xs">{user.email}</p>
                     </div>
                     
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Link href="/profile">
                         <button
-                          className="w-full flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300"
+                          className="w-full flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300 text-sm"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           <User className="w-4 h-4" />
@@ -322,7 +323,7 @@ export default function Header() {
                       
                       <Link href="/dashboard">
                         <button
-                          className="w-full flex items-center gap-3 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300"
+                          className="w-full flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300 text-sm"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           <Trophy className="w-4 h-4" />
@@ -335,7 +336,7 @@ export default function Header() {
                           handleSignOut();
                           setIsMobileMenuOpen(false);
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-300"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all duration-300 text-sm"
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out
@@ -343,14 +344,14 @@ export default function Header() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <Button
                       variant="outline"
                       onClick={() => {
                         handleAuthClick('login');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full border-white/20 hover:bg-white/5"
+                      className="w-full border-white/20 hover:bg-white/5 text-sm py-2"
                     >
                       Sign In
                     </Button>
@@ -360,7 +361,7 @@ export default function Header() {
                         handleAuthClick('signup');
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-sm py-2"
                     >
                       <Sparkles className="w-4 h-4 mr-2" />
                       Get Started
