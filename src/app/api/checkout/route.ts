@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { LemonSqueezyService } from '@/lib/lemonsqueezy/service';
+import { PaddleService } from '@/lib/paddle/service';
 import type { PlanType } from '@/lib/supabase/types';
 
 export async function POST(request: NextRequest) {
@@ -49,8 +49,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Create checkout session
-    const lemonSqueezyService = new LemonSqueezyService();
-    const result = await lemonSqueezyService.createCheckoutSession(
+    const paddleService = new PaddleService();
+    const result = await paddleService.createCheckoutSession(
       user.id,
       planType,
       user.email || profile.email,

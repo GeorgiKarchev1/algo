@@ -13,7 +13,7 @@ import type {
   UserProfile,
   UserSubscription 
 } from '@/lib/supabase/types';
-import { lemonSqueezyClientService } from '@/lib/lemonsqueezy/client-service';
+import { paddleClientService } from '@/lib/paddle/client-service';
 
 // Create Auth Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,7 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         // Get subscription if user exists
         if (user) {
-          subscription = await lemonSqueezyClientService.getUserActiveSubscription(user.id);
+          subscription = await paddleClientService.getUserSubscription(user.id);
         }
         
         if (mounted) {
@@ -86,7 +86,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             
             // Get subscription if user exists
             if (user) {
-              subscription = await lemonSqueezyClientService.getUserActiveSubscription(user.id);
+              subscription = await paddleClientService.getUserSubscription(user.id);
             }
             
             setState(prev => ({
@@ -245,7 +245,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!state.user) return;
     
     try {
-      const subscription = await lemonSqueezyClientService.getUserActiveSubscription(state.user.id);
+      const subscription = await paddleClientService.getUserSubscription(state.user.id);
       
       setState(prev => ({
         ...prev,

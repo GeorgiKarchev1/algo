@@ -85,7 +85,7 @@ export default function Pricing() {
       const data = await response.json();
 
       if (data.success && data.checkoutUrl) {
-        // Redirect to LemonSqueezy checkout
+        // Redirect to Paddle checkout
         window.location.href = data.checkoutUrl;
       } else {
         alert(data.error || 'Failed to create checkout session');
