@@ -98,6 +98,30 @@ body {
   outline-offset: 2px;
 }
 
+/* Chrome extension interference prevention */
+input[data-form-type="other"] {
+  /* Prevent Chrome extensions from injecting scripts */
+  -webkit-user-modify: read-write-plaintext-only;
+  -moz-user-modify: read-write;
+  -ms-user-modify: read-write;
+  user-modify: read-write;
+}
+
+/* Additional protection against form injection */
+form[autoComplete="off"] {
+  /* Prevent autocomplete extensions from interfering */
+  -webkit-autofill: none;
+  -webkit-autofill-color: transparent;
+  -webkit-autofill-background-color: transparent;
+}
+
+/* Disable spell check and autocorrect for form inputs */
+input[spellCheck="false"] {
+  -webkit-spell-check: false;
+  -moz-spell-check: false;
+  spell-check: false;
+}
+
 /* Glass morphism utility */
 .glass {
   background: rgba(255, 255, 255, 0.05);

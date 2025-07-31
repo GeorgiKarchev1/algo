@@ -37,8 +37,8 @@ export class PaddleService {
 
       // Create checkout session with Paddle
       const checkoutData = {
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={checkout_id}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
+        success_url: `https://algochad.com/success?session_id={checkout_id}`,
+        cancel_url: `https://algochad.com/pricing`,
         customer_email: userEmail,
         customer_name: userName || '',
         line_items: [

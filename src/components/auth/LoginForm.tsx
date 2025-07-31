@@ -174,6 +174,8 @@ export default function LoginForm({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
+          autoComplete="off"
+          spellCheck="false"
         >
           {/* Email Field */}
           <div className="space-y-2">
@@ -186,6 +188,7 @@ export default function LoginForm({
               </div>
               <input
                 id="email"
+                name="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
@@ -196,6 +199,9 @@ export default function LoginForm({
                 }`}
                 placeholder="Enter your email"
                 disabled={isSubmitting}
+                autoComplete="email"
+                spellCheck="false"
+                data-form-type="other"
               />
             </div>
             {errors.email && (
@@ -221,6 +227,7 @@ export default function LoginForm({
               </div>
               <input
                 id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
@@ -231,6 +238,9 @@ export default function LoginForm({
                 }`}
                 placeholder="Enter your password"
                 disabled={isSubmitting}
+                autoComplete="current-password"
+                spellCheck="false"
+                data-form-type="other"
               />
               <button
                 type="button"

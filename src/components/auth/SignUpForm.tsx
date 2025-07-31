@@ -260,6 +260,8 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
+          autoComplete="off"
+          spellCheck="false"
         >
           {/* Full Name Field */}
           <div className="space-y-2">
@@ -272,6 +274,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
               </div>
               <input
                 id="fullName"
+                name="fullName"
                 type="text"
                 value={formData.fullName}
                 onChange={(e) => handleInputChange('fullName', e.target.value)}
@@ -282,6 +285,9 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 }`}
                 placeholder="Enter your full name"
                 disabled={isSubmitting}
+                autoComplete="name"
+                spellCheck="false"
+                data-form-type="other"
               />
             </div>
             {errors.fullName && (
@@ -307,6 +313,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
               </div>
               <input
                 id="email"
+                name="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
@@ -317,6 +324,9 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 }`}
                 placeholder="Enter your email"
                 disabled={isSubmitting}
+                autoComplete="email"
+                spellCheck="false"
+                data-form-type="other"
               />
             </div>
             {errors.email && (
@@ -342,6 +352,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
               </div>
               <input
                 id="username"
+                name="username"
                 type="text"
                 value={formData.username}
                 onChange={(e) => handleInputChange('username', e.target.value)}
@@ -352,6 +363,9 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 }`}
                 placeholder="Choose a username"
                 disabled={isSubmitting}
+                autoComplete="username"
+                spellCheck="false"
+                data-form-type="other"
               />
             </div>
             {errors.username && (
@@ -377,6 +391,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
               </div>
               <input
                 id="password"
+                name="password"
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
@@ -387,6 +402,9 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 }`}
                 placeholder="Create a strong password"
                 disabled={isSubmitting}
+                autoComplete="new-password"
+                spellCheck="false"
+                data-form-type="other"
               />
               <button
                 type="button"
@@ -443,6 +461,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
               </div>
               <input
                 id="confirmPassword"
+                name="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
                 value={formData.confirmPassword}
                 onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
@@ -453,6 +472,9 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 }`}
                 placeholder="Confirm your password"
                 disabled={isSubmitting}
+                autoComplete="new-password"
+                spellCheck="false"
+                data-form-type="other"
               />
               <button
                 type="button"

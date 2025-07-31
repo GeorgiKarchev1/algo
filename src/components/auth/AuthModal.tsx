@@ -201,8 +201,12 @@ export default function AuthModal({
                       <div className="space-y-4">
                         <input
                           type="email"
+                          name="resetEmail"
                           placeholder="Enter your email address"
                           className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all duration-300"
+                          autoComplete="email"
+                          spellCheck="false"
+                          data-form-type="other"
                         />
                         
                         <motion.button

@@ -27,6 +27,12 @@ export const metadata: Metadata = {
     title: "Lazy Algo Club",
     description: "The lazy way to master data structures and algorithms",
   },
+  other: {
+    "x-robots-tag": "noindex, nofollow",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "x-xss-protection": "1; mode=block",
+  },
 };
 
 export const viewport: Viewport = {
