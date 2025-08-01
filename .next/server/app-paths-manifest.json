@@ -12,7 +12,7 @@
   "/junior/problems/page": "app/junior/problems/page.js",
   "/page": "app/page.js",
   "/privacy/page": "app/privacy/page.js",
+  "/problems/page": "app/problems/page.js",
   "/problems/[slug]/page": "app/problems/[slug]/page.js",
-  "/terms/page": "app/terms/page.js",
-  "/problems/page": "app/problems/page.js"
+  "/terms/page": "app/terms/page.js"
 }
