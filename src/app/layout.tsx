@@ -5,6 +5,7 @@ import AnimatedBackground from "@/components/ui/AnimatedBackground";
 import Header from "@/components/ui/Header";
 import { AuthProvider } from "@/contexts/AuthContext";
 import AuthCallback from "@/components/auth/AuthCallback";
+import { Suspense } from "react";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -54,7 +55,9 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.variable} antialiased min-h-screen bg-background font-sans`} suppressHydrationWarning={true}>
         <AuthProvider>
-          <AuthCallback />
+          <Suspense fallback={null}>
+            <AuthCallback />
+          </Suspense>
           <AnimatedBackground />
           <Header />
           <div className="relative z-10 pt-20">

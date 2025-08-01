@@ -156,9 +156,12 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
     
       if (response.success) {
         setSuccessMessage(response.message);
-        setTimeout(() => {
-          onSuccess?.();
-        }, 2000);
+        // Only close modal if user is logged in (email confirmed)
+        if (response.user) {
+          setTimeout(() => {
+            onSuccess?.();
+          }, 2000);
+        }
       } else {
         setErrors({ general: response.message });
       }

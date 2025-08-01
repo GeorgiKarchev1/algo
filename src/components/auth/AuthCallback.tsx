@@ -10,7 +10,6 @@ export default function AuthCallback() {
   const { refreshUser } = useAuth();
 
   useEffect(() => {
-    console.log('AuthCallback useEffect triggered');
     // Only run on client side
     if (typeof window === 'undefined') return;
 
@@ -30,7 +29,6 @@ export default function AuthCallback() {
       }
 
       if (code) {
-        console.log('Found auth code, refreshing user...');
         try {
           // Refresh user data to get updated session
           await refreshUser();
@@ -48,7 +46,6 @@ export default function AuthCallback() {
     // Only run if there are auth-related URL parameters
     const code = searchParams.get('code');
     const error = searchParams.get('error');
-    console.log('AuthCallback: checking params:', { code, error });
     if (code || error) {
       handleAuthCallback();
     }

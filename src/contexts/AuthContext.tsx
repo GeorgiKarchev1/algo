@@ -76,13 +76,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
-        console.log('Auth state change:', event, session?.user?.id);
         if (!mounted) return;
 
         // Optimize: Only fetch user data when necessary
         if (event === 'SIGNED_IN' && session?.user) {
           // Only get fresh user data if we don't have a user or if user ID changed
-          if (!state.user || state.user.id !== session.user.id) {
+          const currentUserId = state.user?.id;
+          if (!currentUserId || currentUserId !== session.user.id) {
             const user = await authService.getCurrentUser();
             let subscription: UserSubscription | null = null;
             
@@ -120,7 +120,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             loading: false,
           }));
         } else if (event === 'USER_UPDATED' && session?.user) {
-          console.log('User updated, refreshing user data...');
           // Refresh user data when user is updated (e.g., email confirmed)
           const user = await authService.getCurrentUser();
           let subscription: UserSubscription | null = null;
@@ -130,7 +129,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
             subscription = null; // Temporarily disabled
           }
           
-          console.log('Updated user data:', user);
           setState(prev => ({
             ...prev,
             user,
@@ -145,7 +143,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [state.user?.id]); // Add user ID as dependency to re-run when user changes
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Sign in user
@@ -265,10 +263,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Refresh user data
    */
   const refreshUser = async (): Promise<void> => {
-    console.log('Refreshing user...');
     try {
       const user = await authService.getCurrentUser();
-      console.log('Refreshed user:', user);
       let subscription: UserSubscription | null = null;
       
       if (user) {

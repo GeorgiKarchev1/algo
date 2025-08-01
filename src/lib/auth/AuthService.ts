@@ -96,9 +96,8 @@ export class AuthService {
 
       if (!data.user) {
         return {
-          success: false,
-          message: 'Registration failed',
-          error: 'No user data returned',
+          success: true,
+          message: 'Please check your email to verify your account.',
         };
       }
 
