@@ -13,7 +13,7 @@ import type {
   UserProfile,
   UserSubscription 
 } from '@/lib/supabase/types';
-import { paddleClientService } from '@/lib/paddle/client-service';
+// import { paddleClientService } from '@/lib/paddle/client-service';
 
 // Create Auth Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,7 +46,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         // Get subscription if user exists
         if (user) {
-          subscription = await paddleClientService.getUserSubscription(user.id);
+          // subscription = await paddleClientService.getUserSubscription(user.id);
+          subscription = null; // Temporarily disabled
         }
         
         if (mounted) {
@@ -75,6 +76,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
+        console.log('Auth state change:', event, session?.user?.id);
         if (!mounted) return;
 
         // Optimize: Only fetch user data when necessary
@@ -86,7 +88,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
             
             // Get subscription if user exists
             if (user) {
-              subscription = await paddleClientService.getUserSubscription(user.id);
+              // subscription = await paddleClientService.getUserSubscription(user.id);
+              subscription = null; // Temporarily disabled
             }
             
             setState(prev => ({
@@ -116,6 +119,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
             ...prev,
             loading: false,
           }));
+        } else if (event === 'USER_UPDATED' && session?.user) {
+          console.log('User updated, refreshing user data...');
+          // Refresh user data when user is updated (e.g., email confirmed)
+          const user = await authService.getCurrentUser();
+          let subscription: UserSubscription | null = null;
+          
+          if (user) {
+            // subscription = await paddleClientService.getUserSubscription(user.id);
+            subscription = null; // Temporarily disabled
+          }
+          
+          console.log('Updated user data:', user);
+          setState(prev => ({
+            ...prev,
+            user,
+            loading: false,
+            subscription,
+          }));
         }
       }
     );
@@ -124,7 +145,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [state.user?.id]); // Add user ID as dependency to re-run when user changes
 
   /**
    * Sign in user
@@ -165,6 +186,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const response = await authService.signUp(formData);
       
+      // Only set user in state if email is confirmed
       if (response.success && response.user) {
         setState(prev => ({
           ...prev,
@@ -172,6 +194,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           loading: false,
         }));
       } else {
+        // Just set loading to false, don't set user if email not confirmed
         setState(prev => ({ ...prev, loading: false }));
       }
       
@@ -239,13 +262,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   /**
+   * Refresh user data
+   */
+  const refreshUser = async (): Promise<void> => {
+    console.log('Refreshing user...');
+    try {
+      const user = await authService.getCurrentUser();
+      console.log('Refreshed user:', user);
+      let subscription: UserSubscription | null = null;
+      
+      if (user) {
+        // subscription = await paddleClientService.getUserSubscription(user.id);
+        subscription = null; // Temporarily disabled
+      }
+      
+      setState(prev => ({
+        ...prev,
+        user,
+        loading: false,
+        subscription,
+      }));
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+      setState(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  /**
    * Refresh subscription data
    */
   const refreshSubscription = async (): Promise<void> => {
     if (!state.user) return;
     
     try {
-      const subscription = await paddleClientService.getUserSubscription(state.user.id);
+      // const subscription = await paddleClientService.getUserSubscription(state.user.id);
+      const subscription = null; // Temporarily disabled
       
       setState(prev => ({
         ...prev,
@@ -264,6 +315,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signOut,
     resetPassword,
     updateProfile,
+    refreshUser,
     refreshSubscription,
   };
 

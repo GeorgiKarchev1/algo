@@ -21,6 +21,7 @@ export default function AuthModal({
   initialMode = 'login',
   onSuccess 
 }: AuthModalProps) {
+  console.log('AuthModal props:', { isOpen, initialMode });
   const [mode, setMode] = useState<AuthMode>(initialMode);
 
   // Reset mode when modal opens
@@ -123,7 +124,7 @@ export default function AuthModal({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
           variants={overlayVariants}
           initial="hidden"
           animate="visible"
@@ -140,7 +141,7 @@ export default function AuthModal({
 
           {/* Modal */}
           <motion.div
-            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-md max-h-[90vh] overflow-y-auto z-50"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
@@ -181,7 +182,7 @@ export default function AuthModal({
                 )}
                 
                 {mode === 'reset' && (
-                  <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8">
+                  <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative z-50">
                     <motion.div
                       className="text-center"
                       initial={{ opacity: 0, y: 20 }}

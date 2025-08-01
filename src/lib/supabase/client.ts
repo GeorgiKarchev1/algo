@@ -1,15 +1,6 @@
 import { createBrowserClient } from '@supabase/ssr';
 import type { SupabaseClient } from '@supabase/supabase-js';
-
-// Temporary fallback type until Supabase types are generated
-type Database = {
-  public: {
-    Tables: Record<string, unknown>;
-    Views: Record<string, unknown>;
-    Functions: Record<string, unknown>;
-    Enums: Record<string, unknown>;
-  };
-};
+import type { Database } from './types';
 
 // Supabase Client Configuration
 export const createClient = (): SupabaseClient<Database> => {

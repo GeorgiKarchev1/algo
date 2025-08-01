@@ -1,146 +1,145 @@
-# 🔧 Supabase Setup Guide - Fix User Profile Creation Error
+# Supabase Setup Guide
 
-## Problem
-You're getting this error when creating accounts:
-```
-Error creating user profile: {}
-Error details: {}
-```
+## 🚀 Бързо свързване на нов Supabase проект
 
-This happens because the `profiles` table doesn't exist in your Supabase database.
+### 1. **Вземи Supabase credentials**
 
-## 🚀 Quick Fix - Method 1: Run SQL Setup
+1. Отиди в твоя нов Supabase проект: https://supabase.com/dashboard
+2. Dashboard → Settings → API
+3. Копирай следните стойности:
+   - **Project URL** (NEXT_PUBLIC_SUPABASE_URL)
+   - **anon public** key (NEXT_PUBLIC_SUPABASE_ANON_KEY)
+   - **service_role** key (SUPABASE_SERVICE_ROLE_KEY)
 
-### Step 1: Open Supabase Dashboard
-1. Go to [supabase.com/dashboard](https://supabase.com/dashboard)
-2. Click on your project: `fivbdlgrilpggncmdekp`
+### 2. **Създай .env.local файл**
 
-### Step 2: Open SQL Editor
-1. Click **"SQL Editor"** in the left sidebar
-2. Click **"New Query"** button
+В root директорията на проекта създай `.env.local` файл:
 
-### Step 3: Copy & Run the SQL
-1. Open the `supabase-setup.sql` file in your project
-2. Copy **ALL** the content from that file
-3. Paste it into the SQL Editor
-4. Click **"Run"** button
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_new_supabase_project_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_new_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_new_supabase_service_role_key_here
 
-### Step 4: Verify Success
-You should see messages like:
-- ✅ "Success. No rows returned"
-- ✅ Multiple successful operations
+# App Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
----
-
-## 🛠️ Alternative Fix - Method 2: Manual Table Creation
-
-If Method 1 doesn't work, follow these steps:
-
-### Step 1: Create Profiles Table
-In Supabase SQL Editor, run this simple command:
-
-```sql
-CREATE TABLE public.profiles (
-    id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    full_name TEXT,
-    username TEXT UNIQUE,
-    avatar_url TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
-);
+# Paddle Configuration (ако използваш)
+PADDLE_API_KEY=your_paddle_api_key_here
+PADDLE_WEBHOOK_SECRET=your_paddle_webhook_secret_here
+PADDLE_VENDOR_ID=your_paddle_vendor_id_here
+PADDLE_ENVIRONMENT=sandbox
+PADDLE_CASUAL_PRICE_ID=pri_01xxxxx
+PADDLE_GIGACHAD_PRICE_ID=pri_01xxxxx
 ```
 
-### Step 2: Enable Row Level Security
-```sql
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-```
+### 3. **Настрой Authentication в Supabase**
 
-### Step 3: Create Basic Policies
-```sql
--- Allow users to read their own profile
-CREATE POLICY "Users can view own profile" ON public.profiles
-    FOR SELECT USING (auth.uid() = id);
+1. **Supabase Dashboard → Authentication → Settings**
 
--- Allow users to update their own profile  
-CREATE POLICY "Users can update own profile" ON public.profiles
-    FOR UPDATE USING (auth.uid() = id);
+2. **Email Auth:**
+   - ✅ Enable Email Signup
+   - ✅ Enable Email Confirmations (optional - можеш да го изключиш за development)
+   - ✅ Enable Secure Email Change
 
--- Allow users to insert their own profile
-CREATE POLICY "Users can insert own profile" ON public.profiles
-    FOR INSERT WITH CHECK (auth.uid() = id);
-```
+3. **URL Configuration:**
+   - Site URL: `http://localhost:3000` (за development)
+   - Redirect URLs: `http://localhost:3000/auth/callback`
 
----
+### 4. **Изпълни SQL скрипта**
 
-## 🧪 Test the Fix
+1. **Supabase Dashboard → SQL Editor → New Query**
+2. Копирай и изпълни целия SQL код от `supabase-complete-setup.sql`
+3. Това ще създаде:
+   - `profiles` таблица
+   - `user_progress` таблица
+   - `subscription_plans` таблица
+   - `user_subgress` таблица
+   - `subscription_plans` таблица (Paddle интеграция)
+   - `user_subscriptions` таблица (Paddle интеграция)
+   - `payment_transactions` таблица (Paddle интеграция)
+   - Row Level Security (RLS) policies
+   - Triggers за автоматично създаване на профили
+   - Sample subscription plans (CASUAL и GIGACHAD)
 
-### Step 1: Try Creating an Account
-1. Go to your app's signup page
-2. Create a new test account
-3. Check the browser console
+### 5. **Тествай интеграцията**
 
-### Step 2: Expected Console Messages
-After the fix, you should see:
-- ✅ `User profile created successfully`
-- ❌ NO MORE: `Error creating user profile: {}`
-
-### Step 3: Verify in Supabase
-1. Go to **Table Editor** in Supabase
-2. Click on **"profiles"** table
-3. You should see the new user's profile data
-
----
-
-## 🔍 Troubleshooting
-
-### If you still get errors:
-
-**Error: "relation 'profiles' does not exist"**
-- ✅ The table wasn't created properly
-- 🔧 Try Method 2 (Manual Table Creation)
-
-**Error: "permission denied"**
-- ✅ RLS policies aren't set up correctly
-- 🔧 Run the policy creation SQL from Method 2
-
-**Error: "duplicate key value"**
-- ✅ This is actually GOOD - it means the profile already exists
-- 🔧 This error can be ignored
-
-### Check Your Setup:
-1. **Verify Table Exists:**
-   ```sql
-   SELECT * FROM information_schema.tables WHERE table_name = 'profiles';
+1. **Стартирай development сървъра:**
+   ```bash
+   npm run dev
    ```
 
-2. **Check Policies:**
-   ```sql
-   SELECT * FROM pg_policies WHERE tablename = 'profiles';
-   ```
+2. **Тествай регистрация:**
+   - Отиди на `http://localhost:3000`
+   - Кликни "Sign Up"
+   - Попълни формата
+   - Провери дали профилът се създава в Supabase Dashboard → Table Editor → profiles
 
-3. **Test Insert:**
-   ```sql
-   SELECT auth.uid(); -- Should return your user ID when logged in
-   ```
+3. **Тествай login:**
+   - Опитай да се логнеш с новосъздадения акаунт
+   - Провери дали се зарежда правилно
 
----
+### 6. **Проверка на настройките**
 
-## 💡 What This Setup Does
+**В Supabase Dashboard провери:**
 
-- **Creates a profiles table** linked to Supabase auth users
-- **Enables security** so users can only access their own data
-- **Allows your app** to store additional user information like full name, username, avatar
-- **Fixes the signup error** you're experiencing
+1. **Authentication → Users** - дали потребителите се създават
+2. **Table Editor → profiles** - дали профилите се създават автоматично
+3. **Authentication → Policies** - дали RLS policies са активни
+4. **SQL Editor** - изпълни verification queries от SQL скрипта
 
----
+### 7. **Често срещани проблеми**
 
-## 🎉 After Setup Success
+**❌ "Missing Supabase environment variables"**
+- Провери дали `.env.local` файлът съществува
+- Провери дали environment variables са правилни
+- Рестартирай development сървъра
 
-Once this is working:
-- ✅ Users can create accounts without errors
-- ✅ User profiles are automatically created
-- ✅ Your app can store and retrieve user profile data
-- ✅ All data is secure with Row Level Security
+**❌ "Table doesn't exist"**
+- Изпълни SQL скрипта отново
+- Провери дали си в правилния Supabase проект
 
-Need help? Check the console messages - they now provide clear guidance on what's happening! 
+**❌ "Profile not created automatically"**
+- Провери дали trigger-ът `on_auth_user_created` е създаден
+- Провери дали функцията `handle_new_user()` съществува
+
+**❌ "RLS policy error"**
+- Провери дали RLS е enabled на таблиците
+- Провери дали policies са създадени правилно
+
+### 8. **Production настройки**
+
+За production сменяй следните стойности:
+
+1. **Supabase Authentication → Settings:**
+   - Site URL: `https://yourdomain.com`
+   - Redirect URLs: `https://yourdomain.com/auth/callback`
+
+2. **Environment variables:**
+   - `NEXT_PUBLIC_APP_URL=https://yourdomain.com`
+
+### 9. **Допълнителни настройки (optional)**
+
+**Email templates:**
+- Supabase Dashboard → Authentication → Email Templates
+- Персонализирай email templates за confirmation и reset password
+
+**Social Auth (ако искаш):**
+- Supabase Dashboard → Authentication → Providers
+- Добави Google, GitHub, etc.
+
+**Database backups:**
+- Supabase Dashboard → Settings → Database
+- Настрой автоматични backups
+
+## ✅ Проверка на успешната интеграция
+
+След всички стъпки трябва да можеш да:
+
+1. ✅ Регистрираш нов потребител
+2. ✅ Логнеш се с регистриран потребител
+3. ✅ Видиш профила в Supabase Dashboard
+4. ✅ Обновиш профилна информация
+5. ✅ Излезеш от акаунта
+
+Ако всичко работи - интеграцията е успешна! 🎉 

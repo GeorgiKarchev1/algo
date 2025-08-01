@@ -66,8 +66,7 @@ export interface Database {
           name: string;
           description: string | null;
           price_monthly: number;
-          lemon_product_id: string;
-          lemon_variant_id: string;
+          paddle_price_id: string;
           features: string[] | null;
           is_popular: boolean;
           is_active: boolean;
@@ -79,8 +78,7 @@ export interface Database {
           name: string;
           description?: string | null;
           price_monthly: number;
-          lemon_product_id: string;
-          lemon_variant_id: string;
+          paddle_price_id: string;
           features?: string[] | null;
           is_popular?: boolean;
           is_active?: boolean;
@@ -92,8 +90,7 @@ export interface Database {
           name?: string;
           description?: string | null;
           price_monthly?: number;
-          lemon_product_id?: string;
-          lemon_variant_id?: string;
+          paddle_price_id?: string;
           features?: string[] | null;
           is_popular?: boolean;
           is_active?: boolean;
@@ -106,8 +103,8 @@ export interface Database {
           id: string;
           user_id: string;
           plan_id: string;
-          lemon_subscription_id: string;
-          lemon_customer_id: string;
+          paddle_subscription_id: string;
+          paddle_customer_id: string;
           status: 'active' | 'paused' | 'cancelled' | 'expired' | 'past_due';
           current_period_start: string | null;
           current_period_end: string | null;
@@ -121,8 +118,8 @@ export interface Database {
           id?: string;
           user_id: string;
           plan_id: string;
-          lemon_subscription_id: string;
-          lemon_customer_id: string;
+          paddle_subscription_id: string;
+          paddle_customer_id: string;
           status?: 'active' | 'paused' | 'cancelled' | 'expired' | 'past_due';
           current_period_start?: string | null;
           current_period_end?: string | null;
@@ -136,8 +133,8 @@ export interface Database {
           id?: string;
           user_id?: string;
           plan_id?: string;
-          lemon_subscription_id?: string;
-          lemon_customer_id?: string;
+          paddle_subscription_id?: string;
+          paddle_customer_id?: string;
           status?: 'active' | 'paused' | 'cancelled' | 'expired' | 'past_due';
           current_period_start?: string | null;
           current_period_end?: string | null;
@@ -153,10 +150,10 @@ export interface Database {
           id: string;
           user_id: string;
           subscription_id: string | null;
-          lemon_order_id: string;
+          paddle_transaction_id: string;
           amount: number;
           currency: string;
-          status: 'pending' | 'paid' | 'failed' | 'refunded';
+          status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
           payment_method: string | null;
           created_at: string;
           updated_at: string;
@@ -165,10 +162,10 @@ export interface Database {
           id?: string;
           user_id: string;
           subscription_id?: string | null;
-          lemon_order_id: string;
+          paddle_transaction_id: string;
           amount: number;
           currency?: string;
-          status?: 'pending' | 'paid' | 'failed' | 'refunded';
+          status?: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
           payment_method?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -177,10 +174,10 @@ export interface Database {
           id?: string;
           user_id?: string;
           subscription_id?: string | null;
-          lemon_order_id?: string;
+          paddle_transaction_id?: string;
           amount?: number;
           currency?: string;
-          status?: 'pending' | 'paid' | 'failed' | 'refunded';
+          status?: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
           payment_method?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -236,8 +233,7 @@ export interface SubscriptionPlan {
   name: string;
   description: string | null;
   price_monthly: number;
-  lemon_product_id: string;
-  lemon_variant_id: string;
+  paddle_price_id: string;
   features: string[] | null;
   is_popular: boolean;
   is_active: boolean;
@@ -249,8 +245,8 @@ export interface UserSubscription {
   id: string;
   user_id: string;
   plan_id: string;
-  lemon_subscription_id: string;
-  lemon_customer_id: string;
+  paddle_subscription_id: string;
+  paddle_customer_id: string;
   status: 'active' | 'paused' | 'cancelled' | 'expired' | 'past_due';
   current_period_start: string | null;
   current_period_end: string | null;
@@ -265,10 +261,10 @@ export interface PaymentTransaction {
   id: string;
   user_id: string;
   subscription_id: string | null;
-  lemon_order_id: string;
+  paddle_transaction_id: string;
   amount: number;
   currency: string;
-  status: 'pending' | 'paid' | 'failed' | 'refunded';
+  status: 'pending' | 'completed' | 'failed' | 'cancelled' | 'refunded';
   payment_method: string | null;
   created_at: string;
   updated_at: string;
@@ -314,6 +310,7 @@ export interface AuthContextType extends AuthState {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<AuthResponse>;
   updateProfile: (data: Partial<UserProfile>) => Promise<AuthResponse>;
+  refreshUser: () => Promise<void>;
   refreshSubscription: () => Promise<void>;
 } 
 

@@ -105,15 +105,20 @@ export class AuthService {
       // Create user profile
       await this.createUserProfile(data.user, fullName, username);
 
-      const user = await this.transformUser(data.user);
-
-      return {
-        success: true,
-        message: data.user.email_confirmed_at 
-          ? 'Account created successfully!' 
-          : 'Please check your email to verify your account.',
-        user,
-      };
+      // Only return user if email is confirmed
+      if (data.user.email_confirmed_at) {
+        const user = await this.transformUser(data.user);
+        return {
+          success: true,
+          message: 'Account created successfully!',
+          user,
+        };
+      } else {
+        return {
+          success: true,
+          message: 'Please check your email to verify your account.',
+        };
+      }
     } catch (error) {
       return {
         success: false,
@@ -179,7 +184,8 @@ export class AuthService {
         return null;
       }
 
-      return await this.transformUser(user);
+      const transformedUser = await this.transformUser(user);
+      return transformedUser;
     } catch (error) {
       console.error('Error getting current user:', error);
       return null;
