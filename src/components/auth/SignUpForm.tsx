@@ -295,7 +295,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                    } catch (_err) {
+                    } catch  {
                       // Ignore Chrome extension errors
                     }
                 }}
