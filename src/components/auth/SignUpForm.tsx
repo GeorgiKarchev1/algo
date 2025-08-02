@@ -295,7 +295,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch (err) {
+                  } catch (_err) {
                     // Ignore Chrome extension errors
                   }
                 }}
@@ -342,7 +342,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch (err) {
+                  } catch (_err) {
                     // Ignore Chrome extension errors
                   }
                 }}
@@ -387,7 +387,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch (err) {
+                  } catch (_err) {
                     // Ignore Chrome extension errors
                   }
                 }}
@@ -436,7 +436,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch (err) {
+                  } catch (_err) {
                     // Ignore Chrome extension errors
                   }
                 }}
@@ -514,7 +514,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch (err) {
+                  } catch (_err) {
                     // Ignore Chrome extension errors
                   }
                 }}
