@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, Zap, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import AuthModal from '@/components/auth/AuthModal';
 import type { PlanType } from '@/lib/supabase/types';
 
 const pricingPlans = [
@@ -56,11 +57,12 @@ const pricingPlans = [
 export default function Pricing() {
   const { user } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleSubscribe = async (planId: string) => {
     if (!user) {
-      // Redirect to sign up or show auth modal
-      alert('Please sign in to subscribe');
+      // Show auth modal for sign up/login
+      setShowAuthModal(true);
       return;
     }
 
@@ -314,6 +316,18 @@ export default function Pricing() {
           </motion.p>
         </motion.div>
       </div>
+
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={() => {
+            setShowAuthModal(false);
+            // User is now authenticated, they can try subscribing again
+          }}
+        />
+      )}
     </section>
   );
 } 
