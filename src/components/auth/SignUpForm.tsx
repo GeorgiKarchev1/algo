@@ -295,9 +295,9 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                    } catch  {
-                      // Ignore Chrome extension errors
-                    }
+                  } catch (_) {
+                    // Ignore Chrome extension errors
+                  }
                 }}
               />
             </div>
@@ -342,7 +342,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch {
+                  } catch (_) {
                     // Ignore Chrome extension errors
                   }
                 }}
@@ -387,7 +387,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch {
+                  } catch (_) {
                     // Ignore Chrome extension errors
                   }
                 }}
@@ -436,7 +436,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch {
+                  } catch (_) {
                     // Ignore Chrome extension errors
                   }
                 }}
@@ -514,7 +514,7 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch {
+                  } catch (_) {
                     // Ignore Chrome extension errors
                   }
                 }}

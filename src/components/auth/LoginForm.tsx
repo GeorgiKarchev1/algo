@@ -206,7 +206,7 @@ export default function LoginForm({
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch {
+                  } catch (_) {
                     // Ignore Chrome extension errors
                   }
                 }}
@@ -253,7 +253,7 @@ export default function LoginForm({
                   // Prevent Chrome extension interference
                   try {
                     e.target.style.zIndex = '9999';
-                  } catch {
+                  } catch (_) {
                     // Ignore Chrome extension errors
                   }
                 }}
