@@ -66,11 +66,17 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Define protected routes
+  // Define protected routes and non-existent routes
   const protectedRoutes = ['/dashboard', '/profile', '/settings'];
   const authRoutes = ['/auth/login', '/auth/signup'];
+  const nonExistentRoutes = ['/dashboard', '/profile', '/settings', '/auth'];
   
   const pathname = request.nextUrl.pathname;
+
+  // Block non-existent routes with 404
+  if (nonExistentRoutes.some(route => pathname.startsWith(route))) {
+    return new NextResponse(null, { status: 404 });
+  }
 
   // Check if the current path is a protected route
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
@@ -85,7 +91,7 @@ export async function middleware(request: NextRequest) {
 
   // Redirect authenticated users from auth routes
   if (isAuthRoute && user) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return response;

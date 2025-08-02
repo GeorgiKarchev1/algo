@@ -6,6 +6,8 @@ import Header from "@/components/ui/Header";
 import { AuthProvider } from "@/contexts/AuthContext";
 import AuthCallback from "@/components/auth/AuthCallback";
 import { Suspense } from "react";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import "@/lib/errorHandler";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -34,6 +36,7 @@ export const metadata: Metadata = {
     "x-content-type-options": "nosniff",
     "x-frame-options": "DENY",
     "x-xss-protection": "1; mode=block",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://*.paddle.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self'; child-src 'self';",
   },
 };
 
@@ -54,16 +57,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} antialiased min-h-screen bg-background font-sans`} suppressHydrationWarning={true}>
-        <AuthProvider>
-          <Suspense fallback={null}>
-            <AuthCallback />
-          </Suspense>
-          <AnimatedBackground />
-          <Header />
-          <div className="relative z-10 pt-20">
-            {children}
-          </div>
-        </AuthProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            <Suspense fallback={null}>
+              <AuthCallback />
+            </Suspense>
+            <AnimatedBackground />
+            <Header />
+            <div className="relative z-10 pt-20">
+              {children}
+            </div>
+          </AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

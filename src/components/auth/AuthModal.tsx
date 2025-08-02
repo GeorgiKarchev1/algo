@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail } from 'lucide-react';
 import LoginForm from './LoginForm';
@@ -21,8 +21,33 @@ export default function AuthModal({
   initialMode = 'login',
   onSuccess 
 }: AuthModalProps) {
-  console.log('AuthModal props:', { isOpen, initialMode });
   const [mode, setMode] = useState<AuthMode>(initialMode);
+
+  // Safe event handlers
+  const handleClose = useCallback(() => {
+    try {
+      onClose();
+    } catch (error) {
+      // Ignore Chrome extension errors
+      if (error instanceof Error && error.message.includes('chrome-extension://')) {
+        return;
+      }
+      console.error('Error closing modal:', error);
+    }
+  }, [onClose]);
+
+  const handleSuccess = useCallback(() => {
+    try {
+      onSuccess?.();
+      onClose();
+    } catch (error) {
+      // Ignore Chrome extension errors
+      if (error instanceof Error && error.message.includes('chrome-extension://')) {
+        return;
+      }
+      console.error('Error in success handler:', error);
+    }
+  }, [onSuccess, onClose]);
 
   // Reset mode when modal opens
   useEffect(() => {
@@ -31,11 +56,7 @@ export default function AuthModal({
     }
   }, [isOpen, initialMode]);
 
-  // Handle successful authentication
-  const handleSuccess = () => {
-    onSuccess?.();
-    onClose();
-  };
+
 
   // Handle escape key
   useEffect(() => {
@@ -129,6 +150,14 @@ export default function AuthModal({
           initial="hidden"
           animate="visible"
           exit="exit"
+          onAnimationStart={() => {
+            // Prevent Chrome extension interference
+            try {
+              document.body.style.pointerEvents = 'auto';
+            } catch (e) {
+              // Ignore Chrome extension errors
+            }
+          }}
         >
           {/* Backdrop */}
           <motion.div
@@ -136,7 +165,7 @@ export default function AuthModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={handleClose}
           />
 
           {/* Modal */}
@@ -149,7 +178,7 @@ export default function AuthModal({
           >
             {/* Close Button */}
             <motion.button
-              onClick={onClose}
+              onClick={handleClose}
               className="absolute top-4 right-4 z-10 w-8 h-8 bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-slate-700/50 transition-all duration-300"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}

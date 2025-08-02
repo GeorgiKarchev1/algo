@@ -202,6 +202,14 @@ export default function LoginForm({
                 autoComplete="email"
                 spellCheck="false"
                 data-form-type="other"
+                onFocus={(e) => {
+                  // Prevent Chrome extension interference
+                  try {
+                    e.target.style.zIndex = '9999';
+                  } catch (err) {
+                    // Ignore Chrome extension errors
+                  }
+                }}
               />
             </div>
             {errors.email && (
@@ -241,6 +249,14 @@ export default function LoginForm({
                 autoComplete="current-password"
                 spellCheck="false"
                 data-form-type="other"
+                onFocus={(e) => {
+                  // Prevent Chrome extension interference
+                  try {
+                    e.target.style.zIndex = '9999';
+                  } catch (err) {
+                    // Ignore Chrome extension errors
+                  }
+                }}
               />
               <button
                 type="button"

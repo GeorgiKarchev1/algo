@@ -291,6 +291,14 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 autoComplete="name"
                 spellCheck="false"
                 data-form-type="other"
+                onFocus={(e) => {
+                  // Prevent Chrome extension interference
+                  try {
+                    e.target.style.zIndex = '9999';
+                  } catch (err) {
+                    // Ignore Chrome extension errors
+                  }
+                }}
               />
             </div>
             {errors.fullName && (
@@ -330,6 +338,14 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 autoComplete="email"
                 spellCheck="false"
                 data-form-type="other"
+                onFocus={(e) => {
+                  // Prevent Chrome extension interference
+                  try {
+                    e.target.style.zIndex = '9999';
+                  } catch (err) {
+                    // Ignore Chrome extension errors
+                  }
+                }}
               />
             </div>
             {errors.email && (
@@ -367,6 +383,14 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 placeholder="Choose a username"
                 disabled={isSubmitting}
                 autoComplete="username"
+                onFocus={(e) => {
+                  // Prevent Chrome extension interference
+                  try {
+                    e.target.style.zIndex = '9999';
+                  } catch (err) {
+                    // Ignore Chrome extension errors
+                  }
+                }}
                 spellCheck="false"
                 data-form-type="other"
               />
@@ -408,6 +432,14 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 autoComplete="new-password"
                 spellCheck="false"
                 data-form-type="other"
+                onFocus={(e) => {
+                  // Prevent Chrome extension interference
+                  try {
+                    e.target.style.zIndex = '9999';
+                  } catch (err) {
+                    // Ignore Chrome extension errors
+                  }
+                }}
               />
               <button
                 type="button"
@@ -478,6 +510,14 @@ export default function SignUpForm({ onSuccess, onSwitchToLogin }: SignUpFormPro
                 autoComplete="new-password"
                 spellCheck="false"
                 data-form-type="other"
+                onFocus={(e) => {
+                  // Prevent Chrome extension interference
+                  try {
+                    e.target.style.zIndex = '9999';
+                  } catch (err) {
+                    // Ignore Chrome extension errors
+                  }
+                }}
               />
               <button
                 type="button"

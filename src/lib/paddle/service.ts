@@ -35,44 +35,51 @@ export class PaddleService {
         };
       }
 
-      // Create checkout session with Paddle
-      const checkoutData = {
-        success_url: `https://algochad.com/success?session_id={checkout_id}`,
-        cancel_url: `https://algochad.com/pricing`,
-        customer_email: userEmail,
-        customer_name: userName || '',
-        line_items: [
+      // Create transaction with Paddle (Paddle Billing API)
+      const transactionData = {
+        items: [
           {
             price_id: plan.priceId,
             quantity: 1,
           },
         ],
-        metadata: {
+        custom_data: {
           user_id: userId,
           plan: planType,
+          user_email: userEmail,
+          user_name: userName || '',
         },
       };
 
-      const response = await fetch(`${paddleConfig.baseUrl}/checkouts`, {
+      const response = await fetch(`${paddleConfig.baseUrl}/transactions`, {
         method: 'POST',
         headers: getPaddleHeaders(),
-        body: JSON.stringify(checkoutData),
+        body: JSON.stringify(transactionData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Paddle checkout error:', errorData);
+        console.error('Paddle transaction error:', errorData);
         return {
           checkoutUrl: '',
-          error: errorData.error?.message || 'Failed to create checkout session',
+          error: errorData.error?.message || 'Failed to create transaction',
         };
       }
 
       const result = await response.json();
       
-      return {
-        checkoutUrl: result.data.url,
-      };
+      // Check if checkout URL is available
+      if (result.data?.checkout?.url) {
+        return {
+          checkoutUrl: result.data.checkout.url,
+        };
+      } else {
+        console.error('No checkout URL in transaction response:', result);
+        return {
+          checkoutUrl: '',
+          error: 'No checkout URL available in transaction response',
+        };
+      }
     } catch (error) {
       console.error('Checkout creation error:', error);
       return {
