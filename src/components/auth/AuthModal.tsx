@@ -154,7 +154,7 @@ export default function AuthModal({
             // Prevent Chrome extension interference
             try {
               document.body.style.pointerEvents = 'auto';
-            } catch (_e) {
+            } catch {
               // Ignore Chrome extension errors
             }
           }}
