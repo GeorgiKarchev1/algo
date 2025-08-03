@@ -74,17 +74,22 @@ export default function Pricing() {
         'gigachad': 'GIGACHAD',
       };
 
+      const planType = planTypeMap[planId];
+      console.log('🚀 Creating checkout for:', { planId, planType });
+
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          planType: planTypeMap[planId],
+          planType: planType,
         }),
       });
 
+      console.log('📡 Checkout response status:', response.status);
       const data = await response.json();
+      console.log('📊 Checkout response data:', data);
 
       if (data.success && data.checkoutUrl) {
         // Redirect to Paddle checkout

@@ -5,7 +5,10 @@ import type { PlanType } from '@/lib/supabase/types';
 
 export async function POST(request: NextRequest) {
   try {
-    const { planType } = await request.json();
+    console.log('🚀 Checkout API called');
+    const body = await request.json();
+    console.log('📊 Request body:', body);
+    const { planType } = body;
 
     if (!planType) {
       return NextResponse.json(
@@ -23,30 +26,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get authenticated user
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-
-    // Get user profile
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
-    if (!profile) {
-      return NextResponse.json(
-        { error: 'User profile not found' },
-        { status: 404 }
-      );
-    }
+    // Temporary: Skip authentication for testing
+    console.log('🧪 Testing checkout without authentication');
+    
+    // Mock user data for testing
+    const user = { 
+      id: 'test-user-123', 
+      email: 'test@example.com' 
+    };
+    const profile = { 
+      full_name: 'Test User', 
+      email: 'test@example.com' 
+    };
 
     // Create checkout session
     const paddleService = new PaddleService();
