@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 async function testPaddleIntegration() {
   console.log('🧪 Testing Paddle Integration...\n');
 

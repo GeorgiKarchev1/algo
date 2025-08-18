@@ -1,4 +1,8 @@
-# 🚀 Paddle Quick Start Guide
+# 🚀 Paddle Quick Start Guide (Updated 2024)
+
+## Production Only Setup
+
+Paddle no longer has a separate sandbox environment. All testing is done in production with Test Mode.
 
 ## Локално тестване (5 минути)
 
@@ -22,7 +26,7 @@ curl -X POST http://localhost:3000/api/checkout \
 ### 1. Настрой environment variables в Vercel
 ```env
 PADDLE_ENVIRONMENT=production
-PADDLE_API_KEY=your_production_api_key
+PADDLE_API_KEY=pdl_live_your_production_api_key
 PADDLE_WEBHOOK_SECRET=your_webhook_secret
 PADDLE_VENDOR_ID=your_vendor_id
 PADDLE_CASUAL_PRICE_ID=pri_01xxxxx
@@ -30,13 +34,18 @@ PADDLE_GIGACHAD_PRICE_ID=pri_01xxxxx
 NEXT_PUBLIC_APP_URL=https://yourdomain.com
 ```
 
-### 2. Тествай production
+### 2. Включи Test Mode в Paddle Dashboard
+1. Отиди в Paddle Dashboard → Settings → Test Mode
+2. Enable Test Mode
+3. Това прави всички транзакции тестови
+
+### 3. Тествай production
 ```bash
 # Замени yourdomain.com с твоя домейн
 npm run test:paddle:production
 ```
 
-### 3. Ръчно тестване
+### 4. Ръчно тестване
 1. Отиди на `https://yourdomain.com/pricing`
 2. Кликни на план
 3. Използвай тестова карта: `4000 0000 0000 0002`
@@ -70,8 +79,13 @@ cat .env.local
 ```
 
 ### ❌ "Invalid API key"
-- Провери дали използваш правилния API key
-- Увери се, че си в правилната среда (sandbox/production)
+- Провери дали API key започва с `pdl_live_`
+- Увери се, че акаунтът е верифициран
+
+### ❌ "403 Forbidden"
+- **Включи Test Mode** в Paddle Dashboard
+- Провери дали акаунтът е верифициран
+- Увери се, че API key има permissions
 
 ### ❌ "No checkout URL available"
 - Провери дали price IDs са правилни
@@ -83,7 +97,7 @@ cat .env.local
 
 ## Test Cards
 
-Използвай тези карти за тестване:
+Използвай тези карти за тестване (само когато Test Mode е включен):
 
 - **Успешно**: `4000 0000 0000 0002`
 - **Отказано**: `4000 0000 0000 0001`
@@ -97,7 +111,7 @@ vercel logs yourdomain.com
 ```
 
 ### Paddle Dashboard
-- Transactions: за всички плащания
+- Transactions: за всички плащания (тестови и реални)
 - Webhooks: за failed deliveries
 - Customers: за нови акаунти
 
@@ -105,11 +119,23 @@ vercel logs yourdomain.com
 
 - [ ] Environment variables са настроени
 - [ ] Webhooks са конфигурирани
-- [ ] Test mode е деактивиран
+- [ ] Test Mode е включен за тестване
 - [ ] SSL сертификат е активен
 - [ ] Database backup е направен
 - [ ] Monitoring е настроен
 
+## Важни бележки
+
+### Test Mode
+- **За тестване**: Test Mode ON = всички транзакции са тестови
+- **За production**: Test Mode OFF = реални транзакции
+- **Безопасно**: Можеш да тестваш без риск от реални плащания
+
+### Production Only
+- Няма отделен sandbox environment
+- Всичко се случва в production
+- Test Mode е единственият начин за безопасно тестване
+
 ---
 
-**💡 Tip**: Винаги първо тествай в sandbox режим преди да отидеш в production!
+**💡 Tip**: Винаги първо тествай с Test Mode включен преди да отидеш в реални плащания!

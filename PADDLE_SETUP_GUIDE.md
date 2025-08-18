@@ -1,12 +1,13 @@
-# Paddle Setup Guide
+# Paddle Setup Guide (Updated 2024)
 
-This guide will help you set up Paddle payments for your LeetCode learning platform.
+This guide will help you set up Paddle payments for your LeetCode learning platform using the current Paddle system.
 
 ## 1. Create Paddle Account
 
 1. Go to [Paddle.com](https://paddle.com) and create an account
-2. Complete the verification process
+2. Complete the verification process (this is now mandatory)
 3. Set up your business information
+4. Wait for account verification (usually 1-2 business days)
 
 ## 2. Configure Paddle Dashboard
 
@@ -34,7 +35,7 @@ For each product, create a recurring price:
 
 1. Go to **Developer Tools** → **API Credentials**
 2. Copy your:
-   - **API Key**
+   - **API Key** (starts with `pdl_live_`)
    - **Vendor ID**
    - **Webhook Secret**
 
@@ -43,21 +44,38 @@ For each product, create a recurring price:
 Create a `.env.local` file with:
 
 ```env
-# Paddle Configuration
-PADDLE_API_KEY=your_api_key_here
+# Paddle Configuration (Production Only)
+PADDLE_API_KEY=pdl_live_your_api_key_here
 PADDLE_WEBHOOK_SECRET=your_webhook_secret_here
 PADDLE_VENDOR_ID=your_vendor_id_here
-PADDLE_ENVIRONMENT=sandbox
+PADDLE_ENVIRONMENT=production
 
 # Paddle Product IDs (get these from your products)
 PADDLE_CASUAL_PRICE_ID=pri_01xxxxx
 PADDLE_GIGACHAD_PRICE_ID=pri_01xxxxx
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+
+# Supabase Configuration (if using Supabase)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+
+# Security Configuration
+NEXT_PUBLIC_ENABLE_ANALYTICS=false
+NEXT_PUBLIC_ENABLE_DEBUG=false
 ```
 
-## 4. Set Up Webhooks
+## 4. Enable Test Mode
+
+**IMPORTANT**: Paddle no longer has a separate sandbox environment. All testing is done in production with Test Mode.
+
+1. Go to **Settings** → **Test Mode**
+2. Enable Test Mode
+3. This allows you to test with test cards without real charges
+
+## 5. Set Up Webhooks
 
 1. Go to **Developer Tools** → **Webhooks**
 2. Add webhook endpoint: `https://yourdomain.com/api/webhooks/paddle`
@@ -70,23 +88,25 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
    - `transaction.completed`
    - `transaction.payment_failed`
 
-## 5. Test the Integration
+## 6. Test the Integration
 
-### 5.1 Run the test script
+### 6.1 Run the test script
 
 ```bash
-node test-paddle-integration.js
+npm run check:paddle:production
 ```
 
-### 5.2 Test checkout flow
+### 6.2 Test checkout flow
 
 1. Start your development server: `npm run dev`
 2. Go to your pricing page
 3. Click on a plan
-4. Verify the checkout URL is generated
-5. Complete a test payment
+4. Use test cards:
+   - **Success**: `4000 0000 0000 0002`
+   - **Decline**: `4000 0000 0000 0001`
+   - **3D Secure**: `4000 0000 0000 3220`
 
-## 6. Database Setup
+## 7. Database Setup
 
 Make sure your database has the required tables:
 
@@ -133,22 +153,30 @@ CREATE TABLE payment_transactions (
 );
 ```
 
-## 7. Production Deployment
+## 8. Production Deployment
 
-### 7.1 Update Environment Variables
+### 8.1 Update Environment Variables
 
-1. Set `PADDLE_ENVIRONMENT=production`
-2. Update `NEXT_PUBLIC_APP_URL` to your production domain
-3. Update webhook URL to production domain
+In Vercel dashboard, add:
 
-### 7.2 Deploy to Vercel
+```env
+PADDLE_ENVIRONMENT=production
+PADDLE_API_KEY=pdl_live_your_production_api_key
+PADDLE_WEBHOOK_SECRET=your_production_webhook_secret
+PADDLE_VENDOR_ID=your_vendor_id
+PADDLE_CASUAL_PRICE_ID=pri_01xxxxx
+PADDLE_GIGACHAD_PRICE_ID=pri_01xxxxx
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+```
+
+### 8.2 Deploy to Vercel
 
 1. Push your code to GitHub
 2. Connect to Vercel
 3. Add environment variables in Vercel dashboard
 4. Deploy
 
-## 8. Troubleshooting
+## 9. Troubleshooting
 
 ### Common Issues
 
@@ -157,14 +185,19 @@ CREATE TABLE payment_transactions (
    - Verify the values are correct
 
 2. **"Invalid API key"**
-   - Ensure you're using the correct API key
-   - Check if you're in the right environment (sandbox/production)
+   - Ensure you're using the correct API key (starts with `pdl_live_`)
+   - Check if your account is verified
 
 3. **"No checkout URL available"**
    - Verify your price IDs are correct
    - Check Paddle dashboard for any errors
 
-4. **Webhook not receiving events**
+4. **"403 Forbidden"**
+   - Enable Test Mode in Paddle dashboard
+   - Check if your account is verified
+   - Ensure API key has transaction permissions
+
+5. **Webhook not receiving events**
    - Verify webhook URL is accessible
    - Check webhook secret is correct
    - Ensure webhook events are selected
@@ -179,7 +212,7 @@ NEXT_PUBLIC_ENABLE_DEBUG=true
 
 This will show detailed logs in the browser console and server logs.
 
-## 9. Security Best Practices
+## 10. Security Best Practices
 
 1. **Never commit API keys to version control**
 2. **Use environment variables for all sensitive data**
@@ -187,7 +220,7 @@ This will show detailed logs in the browser console and server logs.
 4. **Use HTTPS in production**
 5. **Implement proper error handling**
 
-## 10. Support
+## 11. Support
 
 If you encounter issues:
 
@@ -198,4 +231,4 @@ If you encounter issues:
 
 ---
 
-**Note**: This setup uses Paddle's new Billing API. Make sure you're using the latest Paddle SDK and API endpoints. 
+**Note**: Paddle has moved to a production-only model with Test Mode for testing. There is no separate sandbox environment anymore. 

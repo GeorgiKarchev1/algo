@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 // Configuration
 const PRODUCTION_URL = process.env.PRODUCTION_URL || 'https://yourdomain.com';
 const TEST_PLANS = ['CASUAL', 'GIGACHAD'];

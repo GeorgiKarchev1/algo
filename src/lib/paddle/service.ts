@@ -37,6 +37,16 @@ export class PaddleService {
         };
       }
 
+      // Log configuration for debugging
+      console.log('🔧 Paddle Configuration:', {
+        environment: paddleConfig.environment,
+        baseUrl: paddleConfig.baseUrl,
+        priceId: plan.priceId,
+        planName: plan.name,
+        apiKeyLength: paddleConfig.apiKey?.length || 0,
+        apiKeyPrefix: paddleConfig.apiKey?.substring(0, 10) + '...'
+      });
+
       const supabase = await this.getSupabase();
       
       // Check if user already has an active subscription
@@ -73,7 +83,15 @@ export class PaddleService {
         success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
       };
 
-      console.log('📤 Sending transaction request to Paddle:', transactionData);
+      console.log('📤 Sending transaction request to Paddle:', {
+        url: `${paddleConfig.baseUrl}/transactions`,
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${paddleConfig.apiKey.substring(0, 10)}...`,
+          'Content-Type': 'application/json',
+        },
+        body: transactionData
+      });
 
       const response = await fetch(`${paddleConfig.baseUrl}/transactions`, {
         method: 'POST',
@@ -81,12 +99,31 @@ export class PaddleService {
         body: JSON.stringify(transactionData),
       });
 
+      console.log('📥 Paddle response status:', response.status);
+      console.log('📥 Paddle response headers:', Object.fromEntries(response.headers.entries()));
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error('❌ Paddle transaction error:', errorData);
+        
+        // Provide more specific error messages
+        let errorMessage = 'Failed to create transaction';
+        
+        if (errorData.error?.code === 'forbidden') {
+          if (paddleConfig.environment === 'production') {
+            errorMessage = 'Production API key issue. Please check: 1) Test Mode is enabled in Paddle dashboard, 2) API key has transaction permissions, 3) Account is verified';
+          } else {
+            errorMessage = 'API key or permissions issue. Please check your Paddle configuration.';
+          }
+        } else if (errorData.error?.code === 'not_found') {
+          errorMessage = 'Price ID not found. Please check your Paddle product configuration.';
+        } else if (errorData.error?.detail) {
+          errorMessage = errorData.error.detail;
+        }
+        
         return {
           checkoutUrl: '',
-          error: errorData.error?.message || `Failed to create transaction: ${response.status}`,
+          error: `${errorMessage} (${response.status})`,
         };
       }
 

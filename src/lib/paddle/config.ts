@@ -1,12 +1,10 @@
-// Paddle Configuration
+// Paddle Configuration (Updated for 2024 - Production Only)
 export const paddleConfig = {
   apiKey: process.env.PADDLE_API_KEY!,
   webhookSecret: process.env.PADDLE_WEBHOOK_SECRET!,
   vendorId: process.env.PADDLE_VENDOR_ID!,
-  environment: process.env.PADDLE_ENVIRONMENT || 'sandbox', // 'sandbox' or 'production'
-  baseUrl: process.env.PADDLE_ENVIRONMENT === 'production' 
-    ? 'https://api.paddle.com' 
-    : 'https://sandbox-api.paddle.com',
+  environment: 'production', // Paddle no longer has sandbox, only production
+  baseUrl: 'https://api.paddle.com', // Only production URL
 };
 
 // Product and Price IDs - Replace these with your actual Paddle IDs
@@ -44,9 +42,14 @@ export function validatePaddleConfig() {
     );
   }
 
-  // Validate that API key is not empty
+  // Validate that API key is not empty and is production format
   if (!paddleConfig.apiKey || paddleConfig.apiKey === 'your_paddle_api_key_here') {
     throw new Error('PADDLE_API_KEY is not properly configured');
+  }
+
+  // Validate API key format (should start with pdl_live_)
+  if (!paddleConfig.apiKey.startsWith('pdl_live_')) {
+    throw new Error('PADDLE_API_KEY should start with pdl_live_ for production');
   }
 
   // Validate that price IDs are not empty
@@ -58,7 +61,17 @@ export function validatePaddleConfig() {
     throw new Error('PADDLE_GIGACHAD_PRICE_ID is not properly configured');
   }
 
-  console.log('✅ Paddle configuration validated successfully');
+  // Validate price ID format (should start with pri_)
+  if (!SUBSCRIPTION_PLANS.CASUAL.priceId.startsWith('pri_')) {
+    throw new Error('PADDLE_CASUAL_PRICE_ID should start with pri_');
+  }
+
+  if (!SUBSCRIPTION_PLANS.GIGACHAD.priceId.startsWith('pri_')) {
+    throw new Error('PADDLE_GIGACHAD_PRICE_ID should start with pri_');
+  }
+
+  console.log('✅ Paddle configuration validated successfully (Production Mode)');
+  console.log('💡 Remember to enable Test Mode in Paddle dashboard for testing');
 }
 
 // Paddle API headers

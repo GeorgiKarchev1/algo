@@ -9,7 +9,11 @@
     "lint": "next lint",
     "test:paddle": "node test-paddle-integration.js",
     "test:paddle:local": "node test-paddle-local.js",
-    "test:paddle:production": "PRODUCTION_URL=https://yourdomain.com node test-production-paddle.js"
+    "test:paddle:production": "PRODUCTION_URL=https://yourdomain.com node test-production-paddle.js",
+    "check:paddle": "node check-paddle-config.js",
+    "check:paddle:production": "node check-production-paddle.js",
+    "debug:paddle": "node debug-paddle-403.js",
+    "sync:env": "node sync-env-to-vercel.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
