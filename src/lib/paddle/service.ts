@@ -64,7 +64,7 @@ export class PaddleService {
         };
       }
 
-      // Create transaction with Paddle (Paddle Billing API)
+      // Create transaction with Paddle (Paddle Billing API v1)
       const transactionData = {
         items: [
           {
@@ -72,15 +72,14 @@ export class PaddleService {
             quantity: 1,
           },
         ],
+        customer_email: userEmail,
+        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
         custom_data: {
           user_id: userId,
           plan: planType,
           user_email: userEmail,
           user_name: userName || '',
         },
-        customer_email: userEmail,
-        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
       };
 
       console.log('📤 Sending transaction request to Paddle:', {
@@ -90,8 +89,13 @@ export class PaddleService {
           'Authorization': `Bearer ${paddleConfig.apiKey.substring(0, 10)}...`,
           'Content-Type': 'application/json',
         },
-        body: transactionData
+        body: JSON.stringify(transactionData, null, 2)
       });
+      
+      // Log the exact items being sent
+      console.log('🔍 Transaction items:', JSON.stringify(transactionData.items, null, 2));
+      console.log('🔍 Price ID length:', transactionData.items[0].price_id.length);
+      console.log('🔍 Price ID hex:', Buffer.from(transactionData.items[0].price_id).toString('hex'));
 
       const response = await fetch(`${paddleConfig.baseUrl}/transactions`, {
         method: 'POST',
@@ -104,7 +108,7 @@ export class PaddleService {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('❌ Paddle transaction error:', errorData);
+        console.error('❌ Paddle transaction error:', JSON.stringify(errorData, null, 2));
         
         // Provide more specific error messages
         let errorMessage = 'Failed to create transaction';
@@ -117,6 +121,8 @@ export class PaddleService {
           }
         } else if (errorData.error?.code === 'not_found') {
           errorMessage = 'Price ID not found. Please check your Paddle product configuration.';
+        } else if (errorData.error?.code === 'invalid_request') {
+          errorMessage = `Invalid request data: ${errorData.error?.detail || 'Unknown validation error'}`;
         } else if (errorData.error?.detail) {
           errorMessage = errorData.error.detail;
         }
@@ -128,7 +134,7 @@ export class PaddleService {
       }
 
       const result = await response.json();
-      console.log('✅ Paddle transaction response:', result);
+      console.log('✅ Paddle transaction response:', JSON.stringify(result, null, 2));
       
       // Check if checkout URL is available
       if (result.data?.checkout?.url) {

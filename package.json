@@ -13,7 +13,8 @@
     "check:paddle": "node check-paddle-config.js",
     "check:paddle:production": "node check-production-paddle.js",
     "debug:paddle": "node debug-paddle-403.js",
-    "sync:env": "node sync-env-to-vercel.js"
+    "sync:env": "node sync-env-to-vercel.js",
+    "check:env": "node check-production-env.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",

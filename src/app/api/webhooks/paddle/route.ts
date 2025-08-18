@@ -9,6 +9,10 @@ export async function POST(request: NextRequest) {
     const body = await request.text();
     const signature = request.headers.get('paddle-signature');
 
+    console.log('🔍 Webhook received - Signature:', signature ? 'Present' : 'Missing');
+    console.log('🔍 Webhook body length:', body.length);
+    console.log('🔍 Webhook secret length:', paddleConfig.webhookSecret.length);
+
     if (!signature) {
       console.error('Missing webhook signature');
       return NextResponse.json(
@@ -18,7 +22,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify webhook signature
-    if (!verifyPaddleSignature(body, signature, paddleConfig.webhookSecret)) {
+    const isValid = verifyPaddleSignature(body, signature, paddleConfig.webhookSecret);
+    console.log('🔍 Webhook signature validation:', isValid ? 'Valid' : 'Invalid');
+    
+    if (!isValid) {
       console.error('Invalid webhook signature');
       return NextResponse.json(
         { error: 'Invalid signature' },
@@ -66,26 +73,56 @@ export async function POST(request: NextRequest) {
 
 function verifyPaddleSignature(body: string, signature: string, secret: string): boolean {
   try {
+    console.log('🔍 Verifying Paddle signature...');
+    console.log('🔍 Signature format:', signature);
+    console.log('🔍 Body length:', body.length);
+    console.log('🔍 Secret length:', secret.length);
+
     // Paddle signature format: "ts=timestamp;h1=signature"
-    const [tsPart, h1Part] = signature.split(';');
+    const parts = signature.split(';');
+    if (parts.length !== 2) {
+      console.error('❌ Invalid signature format - expected 2 parts, got:', parts.length);
+      return false;
+    }
+
+    const [tsPart, h1Part] = parts;
+    
+    if (!tsPart.startsWith('ts=') || !h1Part.startsWith('h1=')) {
+      console.error('❌ Invalid signature format - missing ts= or h1= prefixes');
+      return false;
+    }
+
     const timestamp = tsPart.split('=')[1];
     const receivedSignature = h1Part.split('=')[1];
 
-    // Create the signed payload
+    console.log('🔍 Extracted timestamp:', timestamp);
+    console.log('🔍 Received signature:', receivedSignature.substring(0, 10) + '...');
+
+    // Create the signed payload exactly as Paddle does
     const signedPayload = `${timestamp}:${body}`;
     
-    // Generate expected signature
+    console.log('🔍 Signed payload preview:', signedPayload.substring(0, 50) + '...');
+    
+    // Generate expected signature using HMAC-SHA256
     const expectedSignature = crypto
       .createHmac('sha256', secret)
-      .update(signedPayload)
+      .update(signedPayload, 'utf8')
       .digest('hex');
 
-    return crypto.timingSafeEqual(
+    console.log('🔍 Expected signature:', expectedSignature.substring(0, 10) + '...');
+
+    // Compare signatures using timing-safe comparison
+    const isValid = crypto.timingSafeEqual(
       Buffer.from(receivedSignature, 'hex'),
       Buffer.from(expectedSignature, 'hex')
     );
+
+    console.log('🔍 Signature validation result:', isValid ? '✅ VALID' : '❌ INVALID');
+    
+    return isValid;
   } catch (error) {
-    console.error('Signature verification error:', error);
+    console.error('❌ Signature verification error:', error);
+    console.error('❌ Error stack:', error instanceof Error ? error.stack : 'No stack');
     return false;
   }
 }
