@@ -1,25 +1,55 @@
 # Paddle Setup Guide
 
-Това ръководство ще ви помогне да настроите Paddle за плащания в сайта и да тествате функционалността.
+This guide will help you set up Paddle payments for your LeetCode learning platform.
 
-## 1. Създаване на Paddle Account
+## 1. Create Paddle Account
 
-1. Отидете на [paddle.com](https://paddle.com) и създайте акаунт
-2. Попълнете бизнес информацията
-3. Активирайте акаунта (може да отнеме 1-2 дни)
+1. Go to [Paddle.com](https://paddle.com) and create an account
+2. Complete the verification process
+3. Set up your business information
 
-## 2. Настройка на Environment Variables
+## 2. Configure Paddle Dashboard
 
-Създайте `.env.local` файл в root директорията на проекта:
+### 2.1 Create Products
 
-```bash
+1. Go to **Catalog** → **Products**
+2. Create two products:
+   - **Casual Learner** ($9/month)
+   - **GigaChad Developer** ($19/month)
+
+### 2.2 Create Prices
+
+For each product, create a recurring price:
+
+1. Click on the product
+2. Go to **Pricing** tab
+3. Click **Add price**
+4. Set up:
+   - **Price**: $9.00 (Casual) or $19.00 (GigaChad)
+   - **Billing cycle**: Monthly
+   - **Currency**: USD
+   - **Tax behavior**: Standard
+
+### 2.3 Get API Credentials
+
+1. Go to **Developer Tools** → **API Credentials**
+2. Copy your:
+   - **API Key**
+   - **Vendor ID**
+   - **Webhook Secret**
+
+## 3. Environment Variables
+
+Create a `.env.local` file with:
+
+```env
 # Paddle Configuration
-PADDLE_API_KEY=your_paddle_api_key_here
+PADDLE_API_KEY=your_api_key_here
 PADDLE_WEBHOOK_SECRET=your_webhook_secret_here
 PADDLE_VENDOR_ID=your_vendor_id_here
 PADDLE_ENVIRONMENT=sandbox
 
-# Paddle Product IDs (ще ги получите след създаване на продуктите)
+# Paddle Product IDs (get these from your products)
 PADDLE_CASUAL_PRICE_ID=pri_01xxxxx
 PADDLE_GIGACHAD_PRICE_ID=pri_01xxxxx
 
@@ -27,137 +57,145 @@ PADDLE_GIGACHAD_PRICE_ID=pri_01xxxxx
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-## 3. Създаване на Продукти в Paddle
+## 4. Set Up Webhooks
 
-### 3.1 Създаване на Casual Learner план
+1. Go to **Developer Tools** → **Webhooks**
+2. Add webhook endpoint: `https://yourdomain.com/api/webhooks/paddle`
+3. Select events:
+   - `subscription.created`
+   - `subscription.updated`
+   - `subscription.cancelled`
+   - `subscription.resumed`
+   - `subscription.paused`
+   - `transaction.completed`
+   - `transaction.payment_failed`
 
-1. В Paddle Dashboard отидете на **Products** → **Create Product**
-2. Настройки:
-   - **Name**: Casual Learner
-   - **Description**: Perfect for beginners starting their coding journey
-   - **Pricing**: $9/month
-   - **Billing Cycle**: Monthly
-   - **Currency**: USD
+## 5. Test the Integration
 
-### 3.2 Създаване на GigaChad Developer план
-
-1. Създайте нов продукт
-2. Настройки:
-   - **Name**: GigaChad Developer
-   - **Description**: Advanced features for serious developers
-   - **Pricing**: $19/month
-   - **Billing Cycle**: Monthly
-   - **Currency**: USD
-
-### 3.3 Извличане на Price IDs
-
-След създаването на продуктите, използвайте скрипта за извличане на ID-тата:
+### 5.1 Run the test script
 
 ```bash
-node get-paddle-products.js
+node test-paddle-integration.js
 ```
 
-## 4. Настройка на Webhooks
+### 5.2 Test checkout flow
 
-### 4.1 Създаване на Webhook
+1. Start your development server: `npm run dev`
+2. Go to your pricing page
+3. Click on a plan
+4. Verify the checkout URL is generated
+5. Complete a test payment
 
-1. В Paddle Dashboard отидете на **Developer Tools** → **Webhooks**
-2. Създайте нов webhook:
-   - **URL**: `https://your-domain.com/api/webhooks/paddle`
-   - **Events**: Изберете всички subscription и transaction events
+## 6. Database Setup
 
-### 4.2 Локално тестване с ngrok
+Make sure your database has the required tables:
 
-За локално тестване използвайте ngrok:
+```sql
+-- Subscription plans table
+CREATE TABLE subscription_plans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price_monthly INTEGER NOT NULL,
+  paddle_price_id VARCHAR(255) UNIQUE NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
 
-```bash
-# Инсталирайте ngrok
-npm install -g ngrok
+-- User subscriptions table
+CREATE TABLE user_subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+  plan_id UUID NOT NULL REFERENCES subscription_plans(id),
+  paddle_subscription_id VARCHAR(255) UNIQUE NOT NULL,
+  paddle_customer_id VARCHAR(255) NOT NULL,
+  status VARCHAR(50) NOT NULL DEFAULT 'active',
+  current_period_start TIMESTAMP,
+  current_period_end TIMESTAMP,
+  cancel_at_period_end BOOLEAN DEFAULT false,
+  cancelled_at TIMESTAMP,
+  trial_end TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
 
-# Стартирайте ngrok
-ngrok http 3000
-
-# Използвайте ngrok URL-а за webhook
+-- Payment transactions table
+CREATE TABLE payment_transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+  subscription_id UUID REFERENCES user_subscriptions(id),
+  paddle_transaction_id VARCHAR(255) UNIQUE NOT NULL,
+  amount INTEGER NOT NULL,
+  currency VARCHAR(3) NOT NULL DEFAULT 'USD',
+  status VARCHAR(50) NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT NOW()
+);
 ```
-
-## 5. Database Setup
-
-Изпълнете SQL миграцията за Paddle:
-
-```bash
-# В Supabase SQL Editor или чрез psql
-psql -h your-supabase-host -U postgres -d postgres -f paddle-migration.sql
-```
-
-## 6. Тестване на Функционалността
-
-### 6.1 Стартиране на приложението
-
-```bash
-npm run dev
-```
-
-### 6.2 Тестване на Checkout
-
-1. Отидете на `/pricing` страницата
-2. Изберете план
-3. Попълнете формата за плащане
-4. Използвайте тестови карти:
-   - **Success**: 4000 0000 0000 0002
-   - **Decline**: 4000 0000 0000 0001
-
-### 6.3 Тестване на Webhooks
-
-1. Проверете логовете в конзолата
-2. Проверете базата данни за нови записи
-3. Използвайте Paddle webhook testing tools
 
 ## 7. Production Deployment
 
-### 7.1 Environment Variables
+### 7.1 Update Environment Variables
 
-Обновете environment variables за production:
+1. Set `PADDLE_ENVIRONMENT=production`
+2. Update `NEXT_PUBLIC_APP_URL` to your production domain
+3. Update webhook URL to production domain
 
-```bash
-PADDLE_ENVIRONMENT=production
-NEXT_PUBLIC_APP_URL=https://your-domain.com
-```
+### 7.2 Deploy to Vercel
 
-### 7.2 Webhook URL
-
-Обновете webhook URL-а в Paddle Dashboard да сочи към production домейна.
+1. Push your code to GitHub
+2. Connect to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
 
 ## 8. Troubleshooting
 
-### Често срещани проблеми:
+### Common Issues
 
-1. **Webhook verification fails**: Проверете `PADDLE_WEBHOOK_SECRET`
-2. **Checkout fails**: Проверете `PADDLE_API_KEY` и `PADDLE_VENDOR_ID`
-3. **Price not found**: Проверете `PADDLE_CASUAL_PRICE_ID` и `PADDLE_GIGACHAD_PRICE_ID`
+1. **"Missing environment variables"**
+   - Check that all Paddle environment variables are set
+   - Verify the values are correct
 
-### Debugging:
+2. **"Invalid API key"**
+   - Ensure you're using the correct API key
+   - Check if you're in the right environment (sandbox/production)
 
-```bash
-# Проверете логовете
-npm run dev
+3. **"No checkout URL available"**
+   - Verify your price IDs are correct
+   - Check Paddle dashboard for any errors
 
-# Тествайте API endpoints
-curl -X POST http://localhost:3000/api/checkout \
-  -H "Content-Type: application/json" \
-  -d '{"planType": "CASUAL"}'
+4. **Webhook not receiving events**
+   - Verify webhook URL is accessible
+   - Check webhook secret is correct
+   - Ensure webhook events are selected
+
+### Debug Mode
+
+Enable debug logging by setting:
+
+```env
+NEXT_PUBLIC_ENABLE_DEBUG=true
 ```
+
+This will show detailed logs in the browser console and server logs.
 
 ## 9. Security Best Practices
 
-1. Никога не комитирайте `.env.local` файла
-2. Използвайте различни API ключове за development и production
-3. Регулярно ротирайте webhook secrets
-4. Мониторирайте webhook events за подозрителна активност
+1. **Never commit API keys to version control**
+2. **Use environment variables for all sensitive data**
+3. **Validate webhook signatures**
+4. **Use HTTPS in production**
+5. **Implement proper error handling**
 
-## 10. Monitoring
+## 10. Support
 
-Настройте мониторинг за:
-- Failed webhook deliveries
-- Checkout conversion rates
-- Subscription cancellations
-- Payment failures 
+If you encounter issues:
+
+1. Check Paddle documentation: https://developer.paddle.com/
+2. Review server logs for error messages
+3. Test with the provided test script
+4. Contact Paddle support if needed
+
+---
+
+**Note**: This setup uses Paddle's new Billing API. Make sure you're using the latest Paddle SDK and API endpoints. 

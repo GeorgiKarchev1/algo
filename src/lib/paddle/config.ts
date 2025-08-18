@@ -38,10 +38,27 @@ export function validatePaddleConfig() {
   );
 
   if (missingVars.length > 0) {
+    console.error('Missing Paddle environment variables:', missingVars);
     throw new Error(
       `Missing required Paddle environment variables: ${missingVars.join(', ')}`
     );
   }
+
+  // Validate that API key is not empty
+  if (!paddleConfig.apiKey || paddleConfig.apiKey === 'your_paddle_api_key_here') {
+    throw new Error('PADDLE_API_KEY is not properly configured');
+  }
+
+  // Validate that price IDs are not empty
+  if (!SUBSCRIPTION_PLANS.CASUAL.priceId || SUBSCRIPTION_PLANS.CASUAL.priceId === 'pri_01xxxxx') {
+    throw new Error('PADDLE_CASUAL_PRICE_ID is not properly configured');
+  }
+
+  if (!SUBSCRIPTION_PLANS.GIGACHAD.priceId || SUBSCRIPTION_PLANS.GIGACHAD.priceId === 'pri_01xxxxx') {
+    throw new Error('PADDLE_GIGACHAD_PRICE_ID is not properly configured');
+  }
+
+  console.log('✅ Paddle configuration validated successfully');
 }
 
 // Paddle API headers

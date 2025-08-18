@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import { PaddleService } from '@/lib/paddle/service';
 import type { PlanType } from '@/lib/supabase/types';
 
@@ -18,10 +17,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate plan type
-    const validPlans: PlanType[] = ['CASUAL', 'GIGACHAD', ];
+    const validPlans: PlanType[] = ['CASUAL', 'GIGACHAD'];
     if (!validPlans.includes(planType)) {
       return NextResponse.json(
-        { error: 'Invalid plan type' },
+        { error: `Invalid plan type. Must be one of: ${validPlans.join(', ')}` },
         { status: 400 }
       );
     }
@@ -40,7 +39,17 @@ export async function POST(request: NextRequest) {
     };
 
     // Create checkout session
-    const paddleService = new PaddleService();
+    let paddleService: PaddleService;
+    try {
+      paddleService = new PaddleService();
+    } catch (error) {
+      console.error('❌ Failed to initialize PaddleService:', error);
+      return NextResponse.json(
+        { error: 'Payment service configuration error' },
+        { status: 500 }
+      );
+    }
+
     const result = await paddleService.createCheckoutSession(
       user.id,
       planType,
@@ -49,19 +58,21 @@ export async function POST(request: NextRequest) {
     );
 
     if (result.error) {
+      console.error('❌ Checkout session creation failed:', result.error);
       return NextResponse.json(
         { error: result.error },
         { status: 400 }
       );
     }
 
+    console.log('✅ Checkout session created successfully:', result.checkoutUrl);
     return NextResponse.json({
       checkoutUrl: result.checkoutUrl,
       success: true,
     });
 
   } catch (error) {
-    console.error('Checkout API error:', error);
+    console.error('❌ Checkout API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

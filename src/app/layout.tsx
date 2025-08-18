@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import AuthCallback from "@/components/auth/AuthCallback";
 import { Suspense } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import TestModeToggle from "@/components/ui/TestModeToggle";
 import "@/lib/errorHandler";
 
 const inter = Inter({ 
@@ -67,6 +68,7 @@ export default function RootLayout({
             <div className="relative z-10 pt-20">
               {children}
             </div>
+            <TestModeToggle />
           </AuthProvider>
         </ErrorBoundary>
       </body>

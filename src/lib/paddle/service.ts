@@ -1,8 +1,18 @@
 import { createClient } from '@/lib/supabase/server';
-import { SUBSCRIPTION_PLANS, paddleConfig, getPaddleHeaders } from './config';
+import { SUBSCRIPTION_PLANS, paddleConfig, getPaddleHeaders, validatePaddleConfig } from './config';
 import type { SubscriptionPlan, UserSubscription, PlanType } from '@/lib/supabase/types';
 
 export class PaddleService {
+  constructor() {
+    // Validate configuration on service instantiation
+    try {
+      validatePaddleConfig();
+    } catch (error) {
+      console.error('Paddle configuration validation failed:', error);
+      throw error;
+    }
+  }
+
   private async getSupabase() {
     return await createClient();
   }
@@ -17,7 +27,16 @@ export class PaddleService {
     userName?: string
   ): Promise<{ checkoutUrl: string; error?: string }> {
     try {
+      console.log('🛒 Creating checkout session for:', { userId, planType, userEmail });
+      
       const plan = SUBSCRIPTION_PLANS[planType];
+      if (!plan) {
+        return {
+          checkoutUrl: '',
+          error: `Invalid plan type: ${planType}`,
+        };
+      }
+
       const supabase = await this.getSupabase();
       
       // Check if user already has an active subscription
@@ -49,7 +68,12 @@ export class PaddleService {
           user_email: userEmail,
           user_name: userName || '',
         },
+        customer_email: userEmail,
+        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
       };
+
+      console.log('📤 Sending transaction request to Paddle:', transactionData);
 
       const response = await fetch(`${paddleConfig.baseUrl}/transactions`, {
         method: 'POST',
@@ -59,14 +83,15 @@ export class PaddleService {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Paddle transaction error:', errorData);
+        console.error('❌ Paddle transaction error:', errorData);
         return {
           checkoutUrl: '',
-          error: errorData.error?.message || 'Failed to create transaction',
+          error: errorData.error?.message || `Failed to create transaction: ${response.status}`,
         };
       }
 
       const result = await response.json();
+      console.log('✅ Paddle transaction response:', result);
       
       // Check if checkout URL is available
       if (result.data?.checkout?.url) {
@@ -74,14 +99,14 @@ export class PaddleService {
           checkoutUrl: result.data.checkout.url,
         };
       } else {
-        console.error('No checkout URL in transaction response:', result);
+        console.error('❌ No checkout URL in transaction response:', result);
         return {
           checkoutUrl: '',
           error: 'No checkout URL available in transaction response',
         };
       }
     } catch (error) {
-      console.error('Checkout creation error:', error);
+      console.error('❌ Checkout creation error:', error);
       return {
         checkoutUrl: '',
         error: error instanceof Error ? error.message : 'Unknown error occurred',

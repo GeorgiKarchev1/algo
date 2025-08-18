@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:paddle": "node test-paddle-integration.js",
+    "test:paddle:local": "node test-paddle-local.js",
+    "test:paddle:production": "PRODUCTION_URL=https://yourdomain.com node test-production-paddle.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
