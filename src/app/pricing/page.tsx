@@ -57,33 +57,60 @@ export default function PricingPage() {
     setError(null);
 
     try {
-      console.log('🚀 Creating checkout for:', { planId: planType.toLowerCase(), planType });
+      // Map plan types to price IDs
+      const priceIdMap: { [key in PlanType]: string } = {
+        'CASUAL': process.env.NEXT_PUBLIC_PADDLE_CASUAL_PRICE_ID || '',
+        'GIGACHAD': process.env.NEXT_PUBLIC_PADDLE_GIGACHAD_PRICE_ID || '',
+      };
 
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ planType }),
-      });
-
-      console.log('📡 Checkout response status:', response.status);
-      const data = await response.json();
-      console.log('📊 Checkout response data:', data);
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create checkout session');
+      const priceId = priceIdMap[planType];
+      if (!priceId) {
+        throw new Error(`Price ID not found for plan: ${planType}`);
       }
 
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
+      console.log('🚀 Opening Paddle checkout for:', { planType, priceId });
+
+      // Use Paddle.js for checkout
+      if (typeof window !== 'undefined' && (window as any).Paddle) {
+        const paddle = (window as any).Paddle;
+        // Initialize Paddle if not already done
+        if (paddle.Environment) {
+          paddle.Environment.set('production');
+        }
+        paddle.Initialize({
+            token: process.env.NEXT_PUBLIC_PADDLE_API_KEY!,
+            eventCallback: (data: any) => {
+              console.log('🏓 Paddle event:', data);
+              if (data.event === 'Checkout.Complete') {
+                console.log('🎉 Checkout completed:', data);
+                window.location.href = `/success?_ptxn=${data.checkout.id}`;
+              }
+            }
+          });
+
+        // Open checkout
+        paddle.Checkout.open({
+          prices: [priceId],
+          email: 'test@example.com', // We can get this from auth later
+          allowQuantity: false,
+          disableLogout: true,
+          displayModeTheme: 'dark',
+          locale: 'en',
+          successCallback: (data: any) => {
+            console.log('✅ Checkout success:', data);
+            window.location.href = `/success?_ptxn=${data.checkout.id}`;
+          },
+          closeCallback: (data: any) => {
+            console.log('🚪 Checkout closed:', data);
+            setLoading(null);
+          }
+        });
       } else {
-        throw new Error('No checkout URL received');
+        throw new Error('Paddle.js is not loaded');
       }
     } catch (err) {
       console.error('❌ Checkout error:', err);
       setError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
       setLoading(null);
     }
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -8,6 +8,7 @@ import { CheckCircle, Zap, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from '@/components/auth/AuthModal';
 import type { PlanType } from '@/lib/supabase/types';
+import { PaddleClientService } from '@/lib/paddle/client';
 
 const pricingPlans = [
   {
@@ -58,6 +59,13 @@ export default function Pricing() {
   const { user } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [paddleService, setPaddleService] = useState<PaddleClientService | null>(null);
+
+  useEffect(() => {
+    // Initialize Paddle client service
+    const service = new PaddleClientService();
+    setPaddleService(service);
+  }, []);
 
   const handleSubscribe = async (planId: string) => {
     if (!user) {
@@ -66,41 +74,54 @@ export default function Pricing() {
       return;
     }
 
+    if (!paddleService) {
+      alert('Payment service is loading. Please try again in a moment.');
+      return;
+    }
+
     setLoadingPlan(planId);
 
     try {
-      const planTypeMap: { [key: string]: PlanType } = {
-        'casual': 'CASUAL',
-        'gigachad': 'GIGACHAD',
+      // Map plan IDs to price IDs from environment variables
+      const priceIdMap: { [key: string]: string } = {
+        'casual': process.env.NEXT_PUBLIC_PADDLE_CASUAL_PRICE_ID || '',
+        'gigachad': process.env.NEXT_PUBLIC_PADDLE_GIGACHAD_PRICE_ID || '',
       };
 
-      const planType = planTypeMap[planId];
-      console.log('🚀 Creating checkout for:', { planId, planType });
-
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          planType: planType,
-        }),
+      console.log('🔍 Environment variables check:', {
+        CASUAL: process.env.NEXT_PUBLIC_PADDLE_CASUAL_PRICE_ID,
+        GIGACHAD: process.env.NEXT_PUBLIC_PADDLE_GIGACHAD_PRICE_ID,
+        planId,
+        priceIdMap
       });
 
-      console.log('📡 Checkout response status:', response.status);
-      const data = await response.json();
-      console.log('📊 Checkout response data:', data);
-
-      if (data.success && data.checkoutUrl) {
-        // Redirect to Paddle checkout
-        window.location.href = data.checkoutUrl;
-      } else {
-        alert(data.error || 'Failed to create checkout session');
+      const priceId = priceIdMap[planId];
+      if (!priceId) {
+        throw new Error(`Price ID not found for plan: ${planId}`);
       }
+
+      console.log('🚀 Opening Paddle checkout for:', { planId, priceId });
+
+      // Use Paddle.js for checkout
+      await paddleService.openCheckout({
+        priceIds: [priceId],
+        email: user.email || undefined,
+        allowQuantity: false,
+        disableLogout: true,
+        displayModeTheme: 'dark',
+        locale: 'en',
+        successCallback: (data) => {
+          console.log('✅ Checkout success:', data);
+          // Redirect handled by Paddle service
+        },
+        closeCallback: (data) => {
+          console.log('🚪 Checkout closed:', data);
+          setLoadingPlan(null);
+        }
+      });
     } catch (error) {
-      console.error('Checkout error:', error);
-      alert('An error occurred. Please try again.');
-    } finally {
+      console.error('❌ Checkout error:', error);
+      alert(`An error occurred: ${error instanceof Error ? error.message : 'Please try again.'}`);
       setLoadingPlan(null);
     }
   };

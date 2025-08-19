@@ -64,8 +64,8 @@ export class PaddleService {
         };
       }
 
-      // Create transaction with Paddle (Paddle Billing API v1)
-      const transactionData = {
+      // Create checkout session with Paddle (Paddle Billing API v1)
+      const checkoutData = {
         items: [
           {
             price_id: plan.priceId,
@@ -73,34 +73,42 @@ export class PaddleService {
           },
         ],
         customer_email: userEmail,
-        return_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
+        return_url: `https://algochad.com/success`,
         custom_data: {
           user_id: userId,
           plan: planType,
           user_email: userEmail,
           user_name: userName || '',
         },
+        // Add checkout settings for better UX
+        checkout_settings: {
+          allow_logout: false,
+          display_mode: "overlay",
+          theme: "dark",
+          locale: "en",
+        },
       };
 
-      console.log('📤 Sending transaction request to Paddle:', {
-        url: `${paddleConfig.baseUrl}/transactions`,
+      console.log('📤 Sending checkout request to Paddle:', {
+        url: `${paddleConfig.baseUrl}/checkout-sessions`,
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${paddleConfig.apiKey.substring(0, 10)}...`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(transactionData, null, 2)
+        body: JSON.stringify(checkoutData, null, 2)
       });
       
       // Log the exact items being sent
-      console.log('🔍 Transaction items:', JSON.stringify(transactionData.items, null, 2));
-      console.log('🔍 Price ID length:', transactionData.items[0].price_id.length);
-      console.log('🔍 Price ID hex:', Buffer.from(transactionData.items[0].price_id).toString('hex'));
+      console.log('🔍 Checkout items:', JSON.stringify(checkoutData.items, null, 2));
+      console.log('🔍 Price ID length:', checkoutData.items[0].price_id.length);
+      console.log('🔍 Price ID:', checkoutData.items[0].price_id);
 
-      const response = await fetch(`${paddleConfig.baseUrl}/transactions`, {
+      // Use proper checkout sessions endpoint instead of transactions
+      const response = await fetch(`${paddleConfig.baseUrl}/checkout-sessions`, {
         method: 'POST',
         headers: getPaddleHeaders(),
-        body: JSON.stringify(transactionData),
+        body: JSON.stringify(checkoutData),
       });
 
       console.log('📥 Paddle response status:', response.status);
@@ -136,16 +144,20 @@ export class PaddleService {
       const result = await response.json();
       console.log('✅ Paddle transaction response:', JSON.stringify(result, null, 2));
       
-      // Check if checkout URL is available
-      if (result.data?.checkout?.url) {
+      // Check if checkout URL is available from checkout session
+      if (result.data?.url) {
+        return {
+          checkoutUrl: result.data.url,
+        };
+      } else if (result.data?.checkout?.url) {
         return {
           checkoutUrl: result.data.checkout.url,
         };
       } else {
-        console.error('❌ No checkout URL in transaction response:', result);
+        console.error('❌ No checkout URL in checkout session response:', result);
         return {
           checkoutUrl: '',
-          error: 'No checkout URL available in transaction response',
+          error: 'No checkout URL available in checkout session response',
         };
       }
     } catch (error) {
