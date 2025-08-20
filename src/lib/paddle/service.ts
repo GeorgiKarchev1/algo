@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { SUBSCRIPTION_PLANS, paddleConfig, getPaddleHeaders, validatePaddleConfig } from './config';
 import type { SubscriptionPlan, UserSubscription, PlanType } from '@/lib/supabase/types';
+import { logger } from '../logger';
 
 export class PaddleService {
   constructor() {
@@ -8,7 +9,7 @@ export class PaddleService {
     try {
       validatePaddleConfig();
     } catch (error) {
-      console.error('Paddle configuration validation failed:', error);
+      logger.error('Paddle configuration validation failed:', error);
       throw error;
     }
   }
@@ -27,7 +28,7 @@ export class PaddleService {
     userName?: string
   ): Promise<{ checkoutUrl: string; error?: string }> {
     try {
-      console.log('🛒 Creating checkout session for:', { userId, planType, userEmail });
+
       
       const plan = SUBSCRIPTION_PLANS[planType];
       if (!plan) {
@@ -37,15 +38,7 @@ export class PaddleService {
         };
       }
 
-      // Log configuration for debugging
-      console.log('🔧 Paddle Configuration:', {
-        environment: paddleConfig.environment,
-        baseUrl: paddleConfig.baseUrl,
-        priceId: plan.priceId,
-        planName: plan.name,
-        apiKeyLength: paddleConfig.apiKey?.length || 0,
-        apiKeyPrefix: paddleConfig.apiKey?.substring(0, 10) + '...'
-      });
+
 
       const supabase = await this.getSupabase();
       
@@ -89,20 +82,7 @@ export class PaddleService {
         },
       };
 
-      console.log('📤 Sending checkout request to Paddle:', {
-        url: `${paddleConfig.baseUrl}/checkout-sessions`,
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${paddleConfig.apiKey.substring(0, 10)}...`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(checkoutData, null, 2)
-      });
-      
-      // Log the exact items being sent
-      console.log('🔍 Checkout items:', JSON.stringify(checkoutData.items, null, 2));
-      console.log('🔍 Price ID length:', checkoutData.items[0].price_id.length);
-      console.log('🔍 Price ID:', checkoutData.items[0].price_id);
+
 
       // Use proper checkout sessions endpoint instead of transactions
       const response = await fetch(`${paddleConfig.baseUrl}/checkout-sessions`, {
@@ -111,12 +91,11 @@ export class PaddleService {
         body: JSON.stringify(checkoutData),
       });
 
-      console.log('📥 Paddle response status:', response.status);
-      console.log('📥 Paddle response headers:', Object.fromEntries(response.headers.entries()));
+
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('❌ Paddle transaction error:', JSON.stringify(errorData, null, 2));
+        logger.paddle.error('Paddle transaction error:', JSON.stringify(errorData, null, 2));
         
         // Provide more specific error messages
         let errorMessage = 'Failed to create transaction';
@@ -142,7 +121,7 @@ export class PaddleService {
       }
 
       const result = await response.json();
-      console.log('✅ Paddle transaction response:', JSON.stringify(result, null, 2));
+
       
       // Check if checkout URL is available from checkout session
       if (result.data?.url) {
@@ -154,14 +133,14 @@ export class PaddleService {
           checkoutUrl: result.data.checkout.url,
         };
       } else {
-        console.error('❌ No checkout URL in checkout session response:', result);
+        logger.paddle.error('No checkout URL in checkout session response:', result);
         return {
           checkoutUrl: '',
           error: 'No checkout URL available in checkout session response',
         };
       }
     } catch (error) {
-      console.error('❌ Checkout creation error:', error);
+      logger.paddle.error('Checkout creation error:', error);
       return {
         checkoutUrl: '',
         error: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -183,13 +162,13 @@ export class PaddleService {
         .order('price_monthly', { ascending: true });
 
       if (error) {
-        console.error('Error fetching subscription plans:', error);
+        logger.error('Error fetching subscription plans:', error);
         return [];
       }
 
       return plans || [];
     } catch (error) {
-      console.error('Error fetching subscription plans:', error);
+      logger.error('Error fetching subscription plans:', error);
       return [];
     }
   }
@@ -212,13 +191,13 @@ export class PaddleService {
         .single();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching user subscription:', error);
+        logger.error('Error fetching user subscription:', error);
         return null;
       }
 
       return subscription as UserSubscription;
     } catch (error) {
-      console.error('Error fetching user subscription:', error);
+      logger.error('Error fetching user subscription:', error);
       return null;
     }
   }
@@ -245,7 +224,7 @@ export class PaddleService {
         .single();
 
       if (!plan) {
-        console.error('Plan not found for price ID:', priceId);
+        logger.error('Plan not found for price ID:', priceId);
         return;
       }
 
@@ -282,10 +261,10 @@ export class PaddleService {
         });
 
       if (error) {
-        console.error('Error upserting subscription:', error);
+        logger.error('Error upserting subscription:', error);
       }
     } catch (error) {
-      console.error('Error handling subscription event:', error);
+      logger.error('Error handling subscription event:', error);
     }
   }
 
@@ -315,10 +294,10 @@ export class PaddleService {
         });
 
       if (error) {
-        console.error('Error creating payment transaction:', error);
+        logger.error('Error creating payment transaction:', error);
       }
     } catch (error) {
-      console.error('Error creating payment transaction:', error);
+      logger.error('Error creating payment transaction:', error);
     }
   }
 
@@ -379,7 +358,7 @@ export class PaddleService {
 
       return { success: true };
     } catch (error) {
-      console.error('Error cancelling subscription:', error);
+      logger.error('Error cancelling subscription:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -410,7 +389,7 @@ export class PaddleService {
 
       return { success: true };
     } catch (error) {
-      console.error('Error resuming subscription:', error);
+      logger.error('Error resuming subscription:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',

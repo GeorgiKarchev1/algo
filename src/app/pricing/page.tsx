@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import Header from '@/components/ui/Header';
+import { logger } from '@/lib/logger';
 
 type PlanType = 'CASUAL' | 'GIGACHAD';
 
@@ -68,7 +69,7 @@ export default function PricingPage() {
         throw new Error(`Price ID not found for plan: ${planType}`);
       }
 
-      console.log('🚀 Opening Paddle checkout for:', { planType, priceId });
+
 
       // Use Paddle.js for checkout
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,9 +84,7 @@ export default function PricingPage() {
             token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             eventCallback: (data: any) => {
-              console.log('🏓 Paddle event:', data);
               if (data.event === 'Checkout.Complete') {
-                console.log('🎉 Checkout completed:', data);
                 window.location.href = `/success?_ptxn=${data.checkout.id}`;
               }
             }
@@ -105,12 +104,10 @@ export default function PricingPage() {
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           successCallback: (data: any) => {
-            console.log('✅ Checkout success:', data);
             window.location.href = `/success?_ptxn=${data.checkout.id}`;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           closeCallback: (data: any) => {
-            console.log('🚪 Checkout closed:', data);
             setLoading(null);
           }
         });
@@ -118,7 +115,7 @@ export default function PricingPage() {
         throw new Error('Paddle.js is not loaded');
       }
     } catch (err) {
-      console.error('❌ Checkout error:', err);
+      logger.error('Checkout error:', err);
       setError(err instanceof Error ? err.message : 'Something went wrong');
       setLoading(null);
     }

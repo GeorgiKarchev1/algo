@@ -3,6 +3,17 @@
 import { useEffect, useState } from 'react';
 
 export default function EnvTest() {
+  // Only allow in development
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white p-8 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">🚫 Access Denied</h1>
+          <p className="text-gray-400">This page is only available in development mode.</p>
+        </div>
+      </div>
+    );
+  }
   const [envVars, setEnvVars] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -24,12 +35,7 @@ export default function EnvTest() {
 
     setEnvVars(testEnvVars);
 
-    // Log to console
-    console.log('=== ENVIRONMENT VARIABLES TEST ===');
-    Object.entries(testEnvVars).forEach(([key, value]) => {
-      console.log(`${key}: ${value}`);
-    });
-    console.log('==================================');
+    // Environment variables loaded (development mode only)
   }, []);
 
   return (

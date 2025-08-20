@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from '@/components/auth/AuthModal';
 import type { PlanType as _PlanType } from '@/lib/supabase/types';
 import { PaddleClientService } from '@/lib/paddle/client';
+import { logger } from '@/lib/logger';
 
 const pricingPlans = [
   {
@@ -88,19 +89,14 @@ export default function Pricing() {
         'gigachad': process.env.NEXT_PUBLIC_PADDLE_GIGACHAD_PRICE_ID || '',
       };
 
-      console.log('🔍 Environment variables check:', {
-        CASUAL: process.env.NEXT_PUBLIC_PADDLE_CASUAL_PRICE_ID,
-        GIGACHAD: process.env.NEXT_PUBLIC_PADDLE_GIGACHAD_PRICE_ID,
-        planId,
-        priceIdMap
-      });
+
 
       const priceId = priceIdMap[planId];
       if (!priceId) {
         throw new Error(`Price ID not found for plan: ${planId}`);
       }
 
-      console.log('🚀 Opening Paddle checkout for:', { planId, priceId });
+
 
       // Use Paddle.js for checkout
       await paddleService.openCheckout({
@@ -111,16 +107,14 @@ export default function Pricing() {
         displayModeTheme: 'dark',
         locale: 'en',
         successCallback: (data) => {
-          console.log('✅ Checkout success:', data);
           // Redirect handled by Paddle service
         },
         closeCallback: (data) => {
-          console.log('🚪 Checkout closed:', data);
           setLoadingPlan(null);
         }
       });
     } catch (error) {
-      console.error('❌ Checkout error:', error);
+      logger.error('Checkout error:', error);
       alert(`An error occurred: ${error instanceof Error ? error.message : 'Please try again.'}`);
       setLoadingPlan(null);
     }

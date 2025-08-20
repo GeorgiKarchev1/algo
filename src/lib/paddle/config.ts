@@ -36,7 +36,7 @@ export function validatePaddleConfig() {
   );
 
   if (missingVars.length > 0) {
-    console.error('Missing Paddle environment variables:', missingVars);
+    // Missing Paddle environment variables - will be logged as error during validation
     throw new Error(
       `Missing required Paddle environment variables: ${missingVars.join(', ')}`
     );
@@ -70,8 +70,7 @@ export function validatePaddleConfig() {
     throw new Error('PADDLE_GIGACHAD_PRICE_ID should start with pri_');
   }
 
-  console.log('✅ Paddle configuration validated successfully (Production Mode)');
-  console.log('💡 Remember to enable Test Mode in Paddle dashboard for testing');
+  // Paddle configuration validated successfully for production
 }
 
 // Paddle API headers

@@ -1,5 +1,7 @@
 'use client';
 
+import { logger } from '../logger';
+
 // Types for Paddle.js
 declare global {
   interface Window {
@@ -52,9 +54,9 @@ export class PaddleClientService {
     this.vendorId = parseInt(process.env.NEXT_PUBLIC_PADDLE_VENDOR_ID || process.env.PADDLE_VENDOR_ID || '0');
     this.environment = (process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT as 'sandbox' | 'production') || 'production';
     
-    // Validate API key is available
-    if (typeof window !== 'undefined' && !process.env.NEXT_PUBLIC_PADDLE_API_KEY) {
-      console.error('❌ NEXT_PUBLIC_PADDLE_API_KEY is not set');
+    // Client-side validation - Client token should be used instead of API key
+    if (typeof window !== 'undefined' && !process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN) {
+      logger.error('NEXT_PUBLIC_PADDLE_CLIENT_TOKEN is not set');
     }
     
     if (typeof window !== 'undefined') {
@@ -76,12 +78,9 @@ export class PaddleClientService {
     }
 
     try {
-      console.log('🔧 Initializing Paddle with environment:', this.environment);
-      
       // Set environment first
       if (window.Paddle.Environment) {
         window.Paddle.Environment.set(this.environment);
-        console.log('✅ Paddle environment set to:', this.environment);
       }
       
       // Get Client Token (not API key!)
@@ -90,24 +89,13 @@ export class PaddleClientService {
         throw new Error('NEXT_PUBLIC_PADDLE_CLIENT_TOKEN is not available');
       }
       
-      console.log('🔧 Initializing Paddle with client token length:', clientToken.length);
-      console.log('🔧 Client token starts with:', clientToken.substring(0, 10) + '...');
-      console.log('🔧 Full environment config:', {
-        environment: this.environment,
-        vendorId: this.vendorId,
-        tokenPrefix: clientToken.substring(0, 10)
-      });
-      
       // Initialize Paddle with the new API
       window.Paddle.Initialize({
         token: clientToken,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         eventCallback: (data: any) => {
-          console.log('🏓 Paddle event:', data);
-          
           // Handle different events
           if (data.event === 'Checkout.Complete') {
-            console.log('🎉 Checkout completed:', data);
             // Redirect to success page
             window.location.href = `/success?_ptxn=${data.checkout.id}`;
           }
@@ -115,10 +103,6 @@ export class PaddleClientService {
       });
 
       this.isInitialized = true;
-      console.log('✅ Paddle initialized successfully', {
-        environment: this.environment,
-        hasToken: !!clientToken
-      });
     } catch (error) {
       console.error('❌ Failed to initialize Paddle:', error);
       console.error('❌ Error details:', {
@@ -138,13 +122,7 @@ export class PaddleClientService {
       throw new Error('Paddle.js is not loaded');
     }
 
-    console.log('🚀 Opening Paddle checkout with options:', options);
-    console.log('🔍 Current Paddle state:', {
-      isInitialized: this.isInitialized,
-      hasClientToken: !!process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
-      environment: this.environment,
-      priceIds: options.priceIds
-    });
+
 
     try {
       const checkoutOptions = {
@@ -166,7 +144,6 @@ export class PaddleClientService {
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         successCallback: (data: any) => {
-          console.log('✅ Checkout success:', data);
           if (options.successCallback) {
             options.successCallback(data);
           } else {
@@ -176,15 +153,12 @@ export class PaddleClientService {
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         closeCallback: (data: any) => {
-          console.log('🚪 Checkout closed:', data);
           if (options.closeCallback) {
             options.closeCallback(data);
           }
         }
       };
 
-      console.log('🔧 Opening Paddle checkout with:', checkoutOptions);
-      
       window.Paddle.Checkout.open(checkoutOptions);
     } catch (error) {
       console.error('❌ Failed to open Paddle checkout:', error);
