@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { CheckCircle, Zap, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from '@/components/auth/AuthModal';
-import type { PlanType } from '@/lib/supabase/types';
+import type { PlanType as _PlanType } from '@/lib/supabase/types';
 import { PaddleClientService } from '@/lib/paddle/client';
 
 const pricingPlans = [

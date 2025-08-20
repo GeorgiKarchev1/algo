@@ -54,24 +54,7 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto text-center">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          whileHover={{ scale: 1.05, y: -2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 text-sm text-muted-foreground mb-8 cursor-pointer group"
-        >
-          <motion.div
-            animate={{ rotate: [0, 15, -15, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <Zap className="w-4 h-4 text-primary-400 group-hover:text-yellow-400 transition-colors" />
-          </motion.div>
-          <span className="group-hover:text-foreground transition-colors">
-            Effortless learning, maximum retention ✨
-          </span>
-        </motion.div>
+
 
         {/* Main Headline */}
         <motion.h1

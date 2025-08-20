@@ -21,6 +21,14 @@ export const metadata: Metadata = {
   keywords: ["algorithms", "data structures", "DSA", "coding", "programming", "learning", "education"],
   authors: [{ name: "Lazy Algo Club" }],
   creator: "Lazy Algo Club",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' }
+    ],
+    apple: { url: '/favicon.svg', type: 'image/svg+xml' },
+    shortcut: '/favicon.svg'
+  },
   openGraph: {
     title: "Lazy Algo Club",
     description: "Learn algorithms without trying too hard. DSA for humans, not grinders.",
@@ -62,6 +70,59 @@ export default function RootLayout({
           src="https://cdn.paddle.com/paddle/v2/paddle.js"
           async
         ></script>
+        <style>{`
+          /* Custom Paddle Checkout Styling */
+          .paddle-popup {
+            border-radius: 16px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+          }
+          
+          .paddle-popup-inner {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%) !important;
+            border-radius: 16px !important;
+          }
+          
+          .paddle-checkout-container {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+          }
+          
+          .paddle-button-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.2s ease !important;
+          }
+          
+          .paddle-button-primary:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3) !important;
+          }
+          
+          .paddle-input {
+            background: rgba(15, 15, 35, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+          }
+          
+          .paddle-input:focus {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+          }
+          
+          .paddle-checkout-header {
+            background: transparent !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+          }
+          
+          .paddle-text-primary {
+            color: #ffffff !important;
+          }
+          
+          .paddle-text-secondary {
+            color: rgba(255, 255, 255, 0.7) !important;
+          }
+        `}</style>
       </head>
       <body className={`${inter.variable} antialiased min-h-screen bg-background font-sans`} suppressHydrationWarning={true}>
         <ErrorBoundary>

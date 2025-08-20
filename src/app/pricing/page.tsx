@@ -71,14 +71,17 @@ export default function PricingPage() {
       console.log('🚀 Opening Paddle checkout for:', { planType, priceId });
 
       // Use Paddle.js for checkout
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (typeof window !== 'undefined' && (window as any).Paddle) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const paddle = (window as any).Paddle;
         // Initialize Paddle if not already done
         if (paddle.Environment) {
           paddle.Environment.set('production');
         }
         paddle.Initialize({
-            token: process.env.NEXT_PUBLIC_PADDLE_API_KEY!,
+            token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             eventCallback: (data: any) => {
               console.log('🏓 Paddle event:', data);
               if (data.event === 'Checkout.Complete') {
@@ -90,16 +93,22 @@ export default function PricingPage() {
 
         // Open checkout
         paddle.Checkout.open({
-          prices: [priceId],
-          email: 'test@example.com', // We can get this from auth later
-          allowQuantity: false,
-          disableLogout: true,
-          displayModeTheme: 'dark',
-          locale: 'en',
+          items: [{ priceId, quantity: 1 }],
+          customer: {
+            email: 'test@example.com' // We can get this from auth later
+          },
+          settings: {
+            allowLogout: false,
+            displayMode: 'overlay',
+            theme: 'dark',
+            locale: 'en'
+          },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           successCallback: (data: any) => {
             console.log('✅ Checkout success:', data);
             window.location.href = `/success?_ptxn=${data.checkout.id}`;
           },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           closeCallback: (data: any) => {
             console.log('🚪 Checkout closed:', data);
             setLoading(null);
