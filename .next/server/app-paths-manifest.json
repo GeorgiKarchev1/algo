@@ -1,4 +1,20 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js"
+  "/api/checkout/route": "app/api/checkout/route.js",
+  "/api/leetcode/daily/route": "app/api/leetcode/daily/route.js",
+  "/api/leetcode/problems/[slug]/route": "app/api/leetcode/problems/[slug]/route.js",
+  "/api/leetcode/problems/route": "app/api/leetcode/problems/route.js",
+  "/api/webhooks/paddle/route": "app/api/webhooks/paddle/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/demo/page": "app/demo/page.js",
+  "/env-test/page": "app/env-test/page.js",
+  "/junior/problems/page": "app/junior/problems/page.js",
+  "/page": "app/page.js",
+  "/pricing/page": "app/pricing/page.js",
+  "/junior/page": "app/junior/page.js",
+  "/privacy/page": "app/privacy/page.js",
+  "/success/page": "app/success/page.js",
+  "/problems/page": "app/problems/page.js",
+  "/problems/[slug]/page": "app/problems/[slug]/page.js",
+  "/terms/page": "app/terms/page.js"
 }

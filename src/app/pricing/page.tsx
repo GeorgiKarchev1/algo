@@ -107,7 +107,7 @@ export default function PricingPage() {
             window.location.href = `/success?_ptxn=${data.checkout.id}`;
           },
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          closeCallback: (data: any) => {
+          closeCallback: (_data: any) => {
             setLoading(null);
           }
         });

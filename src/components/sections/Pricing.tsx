@@ -106,10 +106,10 @@ export default function Pricing() {
         disableLogout: true,
         displayModeTheme: 'dark',
         locale: 'en',
-        successCallback: (data) => {
+        successCallback: (_data) => {
           // Redirect handled by Paddle service
         },
-        closeCallback: (data) => {
+        closeCallback: (_data) => {
           setLoadingPlan(null);
         }
       });

@@ -3,20 +3,11 @@
 import { useEffect, useState } from 'react';
 
 export default function EnvTest() {
-  // Only allow in development
-  if (process.env.NODE_ENV === 'production') {
-    return (
-      <div className="min-h-screen bg-gray-900 text-white p-8 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">🚫 Access Denied</h1>
-          <p className="text-gray-400">This page is only available in development mode.</p>
-        </div>
-      </div>
-    );
-  }
   const [envVars, setEnvVars] = useState<Record<string, string>>({});
 
   useEffect(() => {
+    // Only load env vars in development
+    if (process.env.NODE_ENV !== 'production') {
     // Test all environment variables
     const testEnvVars = {
       'NEXT_PUBLIC_SUPABASE_URL': process.env.NEXT_PUBLIC_SUPABASE_URL || 'NOT_SET',
@@ -36,7 +27,20 @@ export default function EnvTest() {
     setEnvVars(testEnvVars);
 
     // Environment variables loaded (development mode only)
+    }
   }, []);
+
+  // Only allow in development
+  if (process.env.NODE_ENV === 'production') {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white p-8 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">🚫 Access Denied</h1>
+          <p className="text-gray-400">This page is only available in development mode.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
