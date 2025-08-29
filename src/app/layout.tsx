@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     "x-content-type-options": "nosniff",
     "x-frame-options": "DENY",
     "x-xss-protection": "1; mode=block",
-    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.paddle.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://*.paddle.com https://checkout-service.paddle.com; frame-src 'self' https://buy.paddle.com https://*.paddle.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self'; child-src 'self' https://buy.paddle.com https://*.paddle.com;",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.paddle.com https://datafa.st; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://*.paddle.com https://checkout-service.paddle.com https://datafa.st; frame-src 'self' https://buy.paddle.com https://*.paddle.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; worker-src 'self'; child-src 'self' https://buy.paddle.com https://*.paddle.com;",
   },
 };
 
@@ -69,6 +69,12 @@ export default function RootLayout({
         <script 
           src="https://cdn.paddle.com/paddle/v2/paddle.js"
           async
+        ></script>
+        <script
+          defer
+          data-website-id="68b189c841190b6bbb48544c"
+          data-domain="algochad.com"
+          src="https://datafa.st/js/script.js"
         ></script>
         <style>{`
           /* Custom Paddle Checkout Styling */
